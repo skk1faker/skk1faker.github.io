@@ -156,16 +156,6 @@
       </tags>
   </entry>
   <entry>
-    <title>clash配置方法</title>
-    <url>/2024/03/11/clash%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>订阅地址后面加&amp;client=clash，同时订阅的命令使用<code>wget -O /home/skt1faker/VPN/clash/config.yaml "[订阅地址]&amp;client=clash"</code>，例如： <code>wget -O /home/skt1faker/VPN/clash/config.yaml "https://getnode.dksb.store/subscribe/152449/TBfADuRZNOTJ&amp;client=clash"</code></p>
-<p>注意最后修改<code>/usr/bin/renew_subcribe</code>中的订阅链接</p>
-]]></content>
-      <tags>
-        <tag>代理</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>clash_dashboard使用</title>
     <url>/2024/04/08/clash-dashboard%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h1 id="如何设置">如何设置</h1>
@@ -204,6 +194,16 @@
       </categories>
       <tags>
         <tag>linux_manager</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>clash配置方法</title>
+    <url>/2024/03/11/clash%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>订阅地址后面加&amp;client=clash，同时订阅的命令使用<code>wget -O /home/skt1faker/VPN/clash/config.yaml "[订阅地址]&amp;client=clash"</code>，例如： <code>wget -O /home/skt1faker/VPN/clash/config.yaml "https://getnode.dksb.store/subscribe/152449/TBfADuRZNOTJ&amp;client=clash"</code></p>
+<p>注意最后修改<code>/usr/bin/renew_subcribe</code>中的订阅链接</p>
+]]></content>
+      <tags>
+        <tag>代理</tag>
       </tags>
   </entry>
   <entry>
@@ -585,8 +585,13 @@
 <ol type="1">
 <li>创建<code>theme/next/layout/_third-party/comments/utterances.swig</code> <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;%- if page.comments %&#125;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">NexT.utils.loadComments(document.querySelector(&#x27;#utterances-container&#x27;), () =&gt; &#123;</span><br><span class="line">    // if (typeof parcelRequire === &#x27;function&#x27;) &#123; return; &#125;</span><br><span class="line">    var js = document.createElement(&#x27;script&#x27;);</span><br><span class="line">    js.type = &#x27;text/javascript&#x27;;</span><br><span class="line">    js.src = &#x27;https://utteranc.es/client.js&#x27;;</span><br><span class="line">    js.async = true;</span><br><span class="line">    js.crossorigin = &#x27;anonymous&#x27;;</span><br><span class="line">    js.setAttribute(&#x27;repo&#x27;, &#x27;&#123;&#123; theme.utterances.repo &#125;&#125;&#x27;);</span><br><span class="line">    js.setAttribute(&#x27;issue-term&#x27;, &#x27;&#123;&#123; theme.utterances.issue_term &#125;&#125;&#x27;);</span><br><span class="line">    js.setAttribute(&#x27;theme&#x27;, &#x27;&#123;&#123; theme.utterances.theme &#125;&#125;&#x27;);</span><br><span class="line">    document.getElementById(&#x27;utterances-container&#x27;).appendChild(js);</span><br><span class="line">&#125;);</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure></li>
 <li>创建<code>theme/next/scripts/filters/comment/utterances.js</code> <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/* global hexo */</span><br><span class="line">&#x27;use strict&#x27;;</span><br><span class="line">const path = require(&#x27;path&#x27;);</span><br><span class="line">// Add comment</span><br><span class="line">hexo.extend.filter.register(&#x27;theme_inject&#x27;, injects =&gt; &#123;</span><br><span class="line">  let theme = hexo.theme.config;</span><br><span class="line">  if (!theme.utterances.enable) return;</span><br><span class="line">  injects.comment.raw(&#x27;utterances&#x27;, &#x27;&lt;div class=&quot;comments&quot; id=&quot;utterances-container&quot;&gt;&lt;/div&gt;&#x27;, &#123;&#125;, &#123;cache: true&#125;);</span><br><span class="line">  injects.bodyEnd.file(&#x27;utterances&#x27;, path.join(hexo.theme_dir, &#x27;layout/_third-party/comments/utterances.swig&#x27;));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-<li>修改<code>theme/next/_config.yml</code> <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">utterances: </span><br><span class="line">  enable: true</span><br><span class="line">  repo: &quot;username/repo_name&quot;            # 表示仓库位置</span><br><span class="line">  issue_term: &quot;pathname&quot;                # 表示评论在issue中的表示形式</span><br><span class="line">  theme: &quot;github-light&quot;                 # 评论区主题</span><br></pre></td></tr></table></figure></li>
+<li><p>修改<code>theme/next/_config.yml</code> <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">utterances: </span><br><span class="line">  enable: true</span><br><span class="line">  repo: &quot;username/repo_name&quot;            # 表示仓库位置</span><br><span class="line">  issue_term: &quot;pathname&quot;                # 表示评论在issue中的表示形式</span><br><span class="line">  theme: &quot;github-light&quot;                 # 评论区主题</span><br></pre></td></tr></table></figure></p></li>
+<li><p>修改<code>_config.yml</code> <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># URL</span></span><br><span class="line"><span class="comment">## Set your site url here. For example, if you use GitHub Page, set url as &#x27;https://username.github.io/project&#x27;</span></span><br><span class="line">url: https://skk1faker.github.io</span><br><span class="line">permalink: :year/:month/:day/:title/</span><br><span class="line">permalink_defaults:</span><br><span class="line">pretty_urls:</span><br><span class="line">  trailing_index: <span class="literal">true</span> <span class="comment"># Set to false to remove trailing &#x27;index.html&#x27; from permalinks</span></span><br><span class="line">  trailing_html: <span class="literal">true</span> <span class="comment"># Set to false to remove trailing &#x27;.html&#x27; from permalinks</span></span><br></pre></td></tr></table></figure> 注意一定要设置url，因为评论系统需要和github关联，在关联结束后会返回跳转到我们的主界面，需要使用url中的地址，这个地址直接写为博客地址即可。否则会404</p></li>
 </ol>
+<figure>
+<img src="404_page.png" alt="404_page" /><figcaption>404_page</figcaption>
+</figure>
+<p>在这张图中，原url为<code>example.com</code></p>
 <h1 id="参考">参考</h1>
 <p><a href="https://nekodaemon.com/2020/05/20/Hexo-Next%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0Utterances%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/">评论格式设置参考</a><br />
 <a href="https://blog.lanweihong.com/posts/24011/">utterancess安装参考</a></p>
@@ -905,15 +910,6 @@
 ]]></content>
       <tags>
         <tag>概率论,排列组合</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>tire树-字典树</title>
-    <url>/2024/01/15/tire%E6%A0%91-%E5%AD%97%E5%85%B8%E6%A0%91/</url>
-    <content><![CDATA[
-]]></content>
-      <tags>
-        <tag>tire树</tag>
       </tags>
   </entry>
   <entry>
@@ -1477,6 +1473,15 @@ Tr(A)\_{m + 1} - Tr(A)\_{m} &lt; T
 ]]></content>
       <tags>
         <tag>quant,paper</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>tire树-字典树</title>
+    <url>/2024/01/15/tire%E6%A0%91-%E5%AD%97%E5%85%B8%E6%A0%91/</url>
+    <content><![CDATA[
+]]></content>
+      <tags>
+        <tag>tire树</tag>
       </tags>
   </entry>
   <entry>
