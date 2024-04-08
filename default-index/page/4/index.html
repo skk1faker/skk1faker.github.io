@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-navigation"><a href="/navigation" rel="section"><i class="fa fa-user fa-fw"></i>导航</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-navigation"><a href="/navigation" rel="section"><i class="fa fa-user fa-fw"></i>导航</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -149,8 +149,8 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">38</span>
-          <span class="site-state-item-name">日志</span>
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
@@ -160,7 +160,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">45</span>
+        <span class="site-state-item-count">47</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -188,6 +188,385 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/13/abc328e-%E5%9B%BE%E4%B8%AD%E6%9E%9A%E4%B8%BE%E6%A0%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/13/abc328e-%E5%9B%BE%E4%B8%AD%E6%9E%9A%E4%B8%BE%E6%A0%91/" class="post-title-link" itemprop="url">abc328e-图中枚举树</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-11-13 09:59:30" itemprop="dateCreated datePublished" datetime="2023-11-13T09:59:30+08:00">2023-11-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-07 11:17:33" itemprop="dateModified" datetime="2024-04-07T11:17:33+08:00">2024-04-07</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题意">题意</h1>
+<p>给定一个图，节点数量<code>2&lt;=n&lt;=8</code>，边数量<code>n - 1 &lt;= m &lt;= n(n - 1) / 2</code>，求一颗树，树上的边权值对k取模后只最小。</p>
+<h1 id="题解">题解</h1>
+<p>这题是枚举树来做的，最开始的思路是对于每条边枚举接下来到达的点（就是枚举一个集合，集合重元素为即将达到的点），然后dfs逐个对其他点进行访问，但是这是错的，假设第一次集合中位AB两点，然后先访问A，再访问B，这样结果是不对的，因为A访问完其访问组成没有进行记录。</p>
+<p>正解是这样的，通过枚举边来进行枚举树，使用并查集，但是并查集不进行路径压缩，当加边的时候，首先检查边中两个点是否在一个集合里，如果不在一个集合里则合并两个集合，被修改fa的一方需要记录一下以前的值，为了后续dfs之后的恢复，然后进行操作即可。注意一点，就是并查集在做集合合并的时候一定是集合根节点的fa进行改变，如果不是集合根节点进行改变，那么这样的修改只是将部分集合中的元素转移到了其他集合中。</p>
+<figure>
+<img src="-集合合并.png" alt="集合合并" /><figcaption>集合合并</figcaption>
+</figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2023 Wangxinpeng. All rights reserved.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">*   filename：    E.cpp</span></span><br><span class="line"><span class="comment">*   username:     skt1faker</span></span><br><span class="line"><span class="comment">*   create time:  22:31  2023.11.11</span></span><br><span class="line"><span class="comment">    email:        skk1faker@163.com</span></span><br><span class="line"><span class="comment">*   descripe:</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEBUG0</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod1 = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod2 = <span class="number">998244353</span>;</span><br><span class="line"><span class="type">int</span> fa[<span class="number">9</span>];</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Edge</span>&#123;</span><br><span class="line">  <span class="type">int</span> u,v;</span><br><span class="line">  ll w;</span><br><span class="line">&#125;e[<span class="number">50</span>];</span><br><span class="line">ll ans,k,n,m;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">find_f</span><span class="params">(<span class="type">int</span> posi)</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(fa[posi] != posi)<span class="keyword">return</span> <span class="built_in">find_f</span>(fa[posi]);</span><br><span class="line">  <span class="keyword">return</span> posi;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> i,<span class="type">int</span> cnt,ll sum)</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(cnt == n - <span class="number">1</span>)&#123;</span><br><span class="line">    ans = <span class="built_in">min</span>(ans,sum);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span>(;i &lt; m;i++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">find_f</span>(e[i].u) == <span class="built_in">find_f</span>(e[i].v))<span class="keyword">continue</span>;</span><br><span class="line">    <span class="type">int</span> t = <span class="built_in">find_f</span>(e[i].u);</span><br><span class="line">    fa[t] = <span class="built_in">find_f</span>(e[i].v);</span><br><span class="line">    <span class="built_in">dfs</span>(i + <span class="number">1</span>, cnt + <span class="number">1</span>, (sum + e[i].w) % k);</span><br><span class="line">    fa[t] = t;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  cin&gt;&gt;n&gt;&gt;m&gt;&gt;k;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span> ;i &lt; n;i++)&#123;</span><br><span class="line">    fa[i] = i;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; m;i++)&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d%lld&quot;</span>,&amp;e[i].u,&amp;e[i].v,&amp;e[i].w);</span><br><span class="line">    e[i].u--;</span><br><span class="line">    e[i].v--;</span><br><span class="line">    e[i].w = e[i].w % k;</span><br><span class="line">  &#125;</span><br><span class="line">  ans = k;</span><br><span class="line">  <span class="built_in">dfs</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">  cout&lt;&lt;ans&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/11/niuke69029E-%E8%BF%9E%E4%B9%98%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/11/niuke69029E-%E8%BF%9E%E4%B9%98%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="post-title-link" itemprop="url">niuke69029E-连乘表达式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-11-11 10:50:05" itemprop="dateCreated datePublished" datetime="2023-11-11T10:50:05+08:00">2023-11-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-07 11:17:33" itemprop="dateModified" datetime="2024-04-07T11:17:33+08:00">2024-04-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/acm/" itemprop="url" rel="index"><span itemprop="name">acm</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/acm/%E6%95%B0%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">数学</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>链接：https://ac.nowcoder.com/acm/contest/69029/E 来源：牛客网</p>
+<p>题目描述 给定 n 个模 998244353 意义下的函数，第 i 个函数为 <span class="math inline">\(f_i(x)=a_ix+b_i\)</span></p>
+<p>q 次询问，每次询问一个区间 [l,r] 以及一个整数 y，在模 998244353 意义下解如下方程 <span class="math inline">\(f_l(f_{l+1}(…f_{r−1}(f_r(x))…))≡y(mod998244353)\)</span>，若有多个解 x 输出 inf，无解输出 −1。否则输出解 x。 输入描述:</p>
+<p>第一行一个整数 <span class="math inline">\(n(1≤n≤3×10^5)\)</span></p>
+<p>第二行 n 个非负整数，表示 <span class="math inline">\(a_i(0≤a_i&lt;998244353)\)</span></p>
+<p>第三行 n 个非负整数，表示 <span class="math inline">\(b_i(0≤b_i&lt;998244353)\)</span></p>
+<p>接下来一行一个整数 <span class="math inline">\(q(1≤q≤3×105)\)</span></p>
+<p>接下来 q 行每行三个整数 <span class="math inline">\(l,r,y(1≤l≤r≤n,0≤y&lt;998244353)\)</span></p>
+<p>输出描述:</p>
+<p>接下来 q 行每行输出答案。若有多个解 x 输出 inf，无解输出 −1。否则输出解 x。</p>
+<p>示例1 输入 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">3</span><br><span class="line">1 5 2</span><br><span class="line">5 8 2</span><br><span class="line">4</span><br><span class="line">1 2 0</span><br><span class="line">2 3 9</span><br><span class="line">1 3 7</span><br><span class="line">1 1 5</span><br></pre></td></tr></table></figure> 输出 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">199648868</span><br><span class="line">299473305</span><br><span class="line">199648869</span><br><span class="line">0</span><br></pre></td></tr></table></figure></p>
+<h1 id="题解">题解</h1>
+<p>首先猜测表达式结果<span class="math inline">\(f_l(f_{l+1}(…f_{r−1}(f_r(x))…)) = f(l,r)= A(l,r)x + B(l,r)\)</span>，然后可以得到如下表达式</p>
+<p><img src="tuidao.png" alt="tuidao" /> 这里主要需要注意的是连乘法中的想乘元素为0时如何处理，详见<a href="/2023/11/11/%E4%BB%BB%E6%84%8F%E5%8C%BA%E9%97%B4%E8%BF%9E%E4%B9%98%E8%AE%A1%E7%AE%97%E9%99%B7%E9%98%B1/" title="任意区间连乘计算陷阱">任意区间连乘计算陷阱</a>这篇文章</p>
+<p>有了这样的表达式，我们探讨如何求解x</p>
+<p>最直接的方案是 <span class="math inline">\(x = (y - B(l,r)) / A(l,r)\)</span>但是这里要保证A(l,r) != 0，如果为0的话就说明源表达式为<span class="math inline">\(y = 0 * x + B(l,r)\)</span> 这个时候x是任意值都可以，只需要判断y == B(l,r)即可，两者相等则说明多解，不相等则说明无解。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2023 Wangxinpeng. All rights reserved.</span></span><br><span class="line"><span class="comment">*   </span></span><br><span class="line"><span class="comment">*   filename：    D.cpp</span></span><br><span class="line"><span class="comment">*   username:     skt1faker</span></span><br><span class="line"><span class="comment">*   create time:  20:52  2023.11.10</span></span><br><span class="line"><span class="comment">    email:        skk1faker@163.com</span></span><br><span class="line"><span class="comment">*   descripe:     </span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEBUG0</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod1 = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod2 = <span class="number">998244353</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> maxx = (<span class="type">int</span>)<span class="number">3e5</span> + <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">ll A[maxx],B[maxx];</span><br><span class="line"><span class="function">ll <span class="title">rev</span><span class="params">(ll a)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> b = mod2 - <span class="number">2</span>;</span><br><span class="line">  ll temp = a;</span><br><span class="line">  ll ans = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">while</span>(b)&#123;</span><br><span class="line">    <span class="keyword">if</span>(b &amp; <span class="number">1</span>) ans = (ans * temp) % mod2;</span><br><span class="line">    temp = (temp * temp) % mod2;</span><br><span class="line">    b &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">A_</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> ((A[r] * <span class="built_in">rev</span>(A[l - <span class="number">1</span>])) % mod2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">B_</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> ((((B[r] - B[l - <span class="number">1</span>] + mod2) % mod2) * <span class="built_in">rev</span>(A[l - <span class="number">1</span>])) % mod2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> rposi[maxx];    <span class="comment">//右侧第一个0的位置</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> n;</span><br><span class="line">  cin&gt;&gt;n;</span><br><span class="line">  A[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt;= n;i++)&#123;</span><br><span class="line">    ll a;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%lld&quot;</span>,&amp;a);</span><br><span class="line">    <span class="keyword">if</span>(a == <span class="number">0</span>)&#123;</span><br><span class="line">      rposi[i] = i;</span><br><span class="line">      a = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    A[i] = (A[i - <span class="number">1</span>] * a) %mod2;</span><br><span class="line">  &#125;</span><br><span class="line">  rposi[n + <span class="number">1</span>] = n + <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = n;i &gt;= <span class="number">1</span>;i--)&#123;</span><br><span class="line">    <span class="keyword">if</span>(rposi[i] == <span class="number">0</span>)&#123;</span><br><span class="line">      rposi[i] = rposi[i + <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  B[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt;= n;i++)&#123;</span><br><span class="line">    ll b;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%lld&quot;</span>,&amp;b);</span><br><span class="line">    B[i] = (B[i - <span class="number">1</span>] + ((b * A[i - <span class="number">1</span>]) % mod2)) % mod2;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">int</span> q;</span><br><span class="line">  cin&gt;&gt;q;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span> ;i &lt; q;i++)&#123;</span><br><span class="line">    ll l,r,y;</span><br><span class="line">    cin&gt;&gt;l&gt;&gt;r&gt;&gt;y;</span><br><span class="line">    ll x;</span><br><span class="line">    <span class="keyword">if</span>(rposi[l] &gt; r)&#123;</span><br><span class="line">      x = (((y + mod2 - <span class="built_in">B_</span>(l,r)) % mod2) * <span class="built_in">rev</span>(<span class="built_in">A_</span>(l,r))) % mod2; </span><br><span class="line">      cout&lt;&lt;x&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      r = rposi[l];</span><br><span class="line">      <span class="comment">//x = (((y + mod2 - B_(l,r)) % mod2) * rev(A_(l,r))) % mod2; </span></span><br><span class="line">      <span class="keyword">if</span>(<span class="built_in">B_</span>(l,r) == y)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;inf&quot;</span>&lt;&lt;endl;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span> &#123;</span><br><span class="line">        cout&lt;&lt;<span class="number">-1</span>&lt;&lt;endl;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/11/%E4%BB%BB%E6%84%8F%E5%8C%BA%E9%97%B4%E8%BF%9E%E4%B9%98%E8%AE%A1%E7%AE%97%E9%99%B7%E9%98%B1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/11/%E4%BB%BB%E6%84%8F%E5%8C%BA%E9%97%B4%E8%BF%9E%E4%B9%98%E8%AE%A1%E7%AE%97%E9%99%B7%E9%98%B1/" class="post-title-link" itemprop="url">任意区间连乘计算陷阱</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-11-11 10:21:55" itemprop="dateCreated datePublished" datetime="2023-11-11T10:21:55+08:00">2023-11-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-07 11:17:33" itemprop="dateModified" datetime="2024-04-07T11:17:33+08:00">2024-04-07</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="题意">题意</h1>
+<p>对于任意值<span class="math inline">\(a_i, (i \in [1,n])\)</span>，计算任意区间<span class="math inline">\([l,r]\)</span>的值<span class="math inline">\(f(l,r) = \prod_{i = l}^{r}a_i\)</span>。</p>
+<h1 id="题解">题解</h1>
+<p>最先能想到的就是令<span class="math inline">\(A_i = \prod_{j = 1}^{i}a_{j}\)</span>，于是<span class="math inline">\(f(l,r) = A_r / A_{l - 1}\)</span>，但是，看到除法我们可以想到一种可能得情况，就是<span class="math inline">\(A_{l - 1} == 0\)</span>时，这时<span class="math inline">\(A_r == 0\)</span>也应该是成立的，所以这就相当于求极限了，所以使用上述表达式还不能求出连乘。</p>
+<p>解决上述问题的方法是将0替换为一个不为0的数即可（常用1）。通过多余的数组计算l的左侧第一个0的位置，用于判断<span class="math inline">\(f(l,r)\)</span>的值是否为0，如果不为0，那么直接使用<span class="math inline">\(f(l,r) = A_r / A_{l - 1}\)</span>进行计算即可，否则直接输出0就行。</p>
+<p>现给出不完整的代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="type">int</span> A[maxx];</span><br><span class="line"><span class="type">int</span> a[maxx];</span><br><span class="line"><span class="type">int</span> rposi[maxx];</span><br><span class="line">A[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt;= n;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(a[i] == <span class="number">0</span>)&#123;</span><br><span class="line">            A[i] = A[i - <span class="number">1</span>] * <span class="number">1</span>;</span><br><span class="line">            rposi[i] = i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> </span><br><span class="line">            A[i] = A[i - <span class="number">1</span>] * a[i];</span><br><span class="line">    &#125;</span><br><span class="line">    rposi[n + <span class="number">1</span>] = n + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = n;i&gt;=<span class="number">1</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(a[i] == <span class="number">0</span>)&#123;</span><br><span class="line">            rposi[i] = i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            rposi[i] = rposi[i + <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(rposi[l] &lt;= r)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> A[r] / A[l - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/08/p3802-%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA%EF%BC%88%E6%95%B0%E5%88%97%E4%B8%AD%E8%BF%9E%E7%BB%AD%E4%B8%8D%E5%90%8C%E5%80%BC%E6%95%B0%E9%87%8F%EF%BC%89-%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/08/p3802-%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA%EF%BC%88%E6%95%B0%E5%88%97%E4%B8%AD%E8%BF%9E%E7%BB%AD%E4%B8%8D%E5%90%8C%E5%80%BC%E6%95%B0%E9%87%8F%EF%BC%89-%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/" class="post-title-link" itemprop="url">p3802-小魔女帕琪（数列中连续不同值数量）-概率论-排列组合</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-11-08 20:09:23" itemprop="dateCreated datePublished" datetime="2023-11-08T20:09:23+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-07 11:17:33" itemprop="dateModified" datetime="2024-04-07T11:17:33+08:00">2024-04-07</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="小魔女帕琪">小魔女帕琪</h1>
+<h2 id="题目背景">题目背景</h2>
+<p>从前有一个聪明的小魔女帕琪，兴趣是狩猎吸血鬼。</p>
+<p>帕琪能熟练使用七种属性（金、木、水、火、土、日、月）的魔法，除了能使用这么多种属性魔法外，她还能将两种以上属性组合，从而唱出强力的魔法。比如说为了加强攻击力而将火和木组合，为了掩盖弱点而将火和土组合等等，变化非常丰富。</p>
+<h2 id="题目描述">题目描述</h2>
+<p>现在帕琪与强大的夜之女王，吸血鬼蕾咪相遇了，夜之女王蕾咪具有非常强大的生命力，普通的魔法难以造成效果，只有终极魔法：帕琪七重奏才能对蕾咪造成伤害。帕琪七重奏的触发条件是：连续施放的 <span class="math inline">\(7\)</span> 个魔法中，如果魔法的属性各不相同，就能触发一次帕琪七重奏。</p>
+<p>请注意，无论前 <span class="math inline">\(6\)</span> 个魔法是否已经参与施放终极魔法，只要连续 <span class="math inline">\(7\)</span> 个魔法的属性各不相同，就会再触发一次终极魔法。例如，如果用序号来代表一种魔法，魔法的施放序列为 <span class="math inline">\(1, 2, 3, 4, 5, 6,7, 1\)</span>，则前 <span class="math inline">\(7\)</span> 个魔法会触发一次终极魔法，后 <span class="math inline">\(7\)</span> 个魔法会再触发一次终极魔法。</p>
+<p>现在帕琪有 <span class="math inline">\(7\)</span> 种属性的能量晶体，第 <span class="math inline">\(i\)</span> 种晶体可以施放出属性为 <span class="math inline">\(i\)</span> 的魔法，共有 <span class="math inline">\(a_i\)</span> 个。每次施放魔法时，会等概率随机消耗一个现有的能量晶体，然后释放一个对应属性的魔法。</p>
+<p>现在帕琪想知道，她触发帕琪七重奏的期望次数是多少，可是她并不会算，于是找到了学 OI 的你。</p>
+<h2 id="输入格式">输入格式</h2>
+<p>输入只有一行 <span class="math inline">\(7\)</span> 个整数，第 <span class="math inline">\(i\)</span> 个整数代表 <span class="math inline">\(a_i\)</span>。</p>
+<h2 id="输出格式">输出格式</h2>
+<p>输出一行一个实数代表答案，四舍五入保留三位小数。</p>
+<h2 id="样例-1">样例 #1</h2>
+<h3 id="样例输入-1">样例输入 #1</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 1 1 1 1 1 1</span><br></pre></td></tr></table></figure>
+<h3 id="样例输出-1">样例输出 #1</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.000</span><br></pre></td></tr></table></figure>
+<h2 id="提示">提示</h2>
+<h4 id="样例输入输出-1-解释">样例输入输出 1 解释</h4>
+<p>显然一定会触发一次帕琪七重奏。</p>
+<h4 id="数据规模与约定">数据规模与约定</h4>
+<ul>
+<li>对于 <span class="math inline">\(30\%\)</span> 的数据，保证 <span class="math inline">\(\sum_{i = 1}^7 a_i \leq 10\)</span>。</li>
+<li>对于 <span class="math inline">\(100\%\)</span> 的数据，保证 <span class="math inline">\(0 \leq a_i \leq 10^9\)</span>，且 <span class="math inline">\(\sum_{i = 1}^7 a_i \leq 10^9\)</span>。</li>
+</ul>
+<h1 id="题解">题解</h1>
+<p>题意主要为，一个序列中有重复的7种元素，每种数列出现可能性一样，问数列中连续7个不同元素组成的序列个数期望为多少； 题目要求的东西我们可以这样理解，根据排列组合有M中组合方案，现在要求每一种方案中出现连续7个不同元素的位置数量有多少，求数量和 / M大小</p>
+<p>这样理解之后题目要求的东西可以转化为求每一个位置前面由7种不同元素组成的排列数量，然后对每一个位置求和与无条件的排列总数进行比较，就能得到最终答案。</p>
+<figure>
+<img src="1推导.png" alt="1推导" /><figcaption>1推导</figcaption>
+</figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2023 Wangxinpeng. All rights reserved.</span></span><br><span class="line"><span class="comment">*   </span></span><br><span class="line"><span class="comment">*   filename：    p3802.cpp</span></span><br><span class="line"><span class="comment">*   username:     skt1faker</span></span><br><span class="line"><span class="comment">*   create time:  19:29  2023.11.08</span></span><br><span class="line"><span class="comment">    email:        skk1faker@163.com</span></span><br><span class="line"><span class="comment">*   descripe:     </span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEBUG0</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod1 = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod2 = <span class="number">998244353</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">double</span> S;</span><br><span class="line">  <span class="type">double</span> ans = <span class="number">5040</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">7</span>;i++)&#123;</span><br><span class="line">    <span class="type">double</span> temp;</span><br><span class="line">    cin&gt;&gt;temp;</span><br><span class="line">    S += temp;</span><br><span class="line">    ans *= temp;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">6</span>;i++)</span><br><span class="line">    ans /= S - i;</span><br><span class="line">  <span class="comment">//ans += 0.0005;</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%0.3lf\n&quot;</span>,ans);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1257,342 +1636,8 @@ Tr(A)\_{m + 1} - Tr(A)\_{m} &lt; T
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/13/clean-cachefile/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/acm-icpc.png">
-      <meta itemprop="name" content="skk1faker">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="skk1faker 笔记">
-      <meta itemprop="description" content="登峰造极">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | skk1faker 笔记">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/10/13/clean-cachefile/" class="post-title-link" itemprop="url">清理linux垃圾内容</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-10-13 10:19:41" itemprop="dateCreated datePublished" datetime="2023-10-13T10:19:41+08:00">2023-10-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-07 11:17:33" itemprop="dateModified" datetime="2024-04-07T11:17:33+08:00">2024-04-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="一些文件夹">一些文件夹</h1>
-<ol type="1">
-<li>~/.cache/vscode-cpptools/ipch ipch文件夹是Intelli Sense（好像是预编译头文件之类的）这个东西产生的缓存文件，占用空间很大！！！每编译一次文件就会产生ipch里对应的一个文件夹。我看了我的ipch文件夹产生了121个对应的文件夹，总共产生了6G多。。。惊人啊！</li>
-</ol>
-<p>在VSCode找到设置→扩展→C/C++→Intelli Sense Cache Path，如上图。1处写明了vscode默认Intelli Sense缓存文件路径是在C盘的，2处可以更改为你要保存缓存文件的位置。据我所知，这些缓存文件删了也不影响的之前的文件的，所以可以随时删~只是每次编译又会重新产生，所以还是把缓存路径改为别的盘吧 <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41688558/article/details/99085069">参考</a></p>
-<ol start="2" type="1">
-<li>~/.config/Code/Service Worker/CacheStorage ubuntu系统下，我们的空间会越来越小，有时候不知道大文件藏在哪。其中有一项就是vscode的缓存，时间久了可能会有几十G的空间，把缓存删掉，可以腾出很大空间。 不同电脑的vscode安装目录可能有区别： cd ~/.config/Code/User/workspaceStorage/ rm ./<em> cd ~/.config/Code/Service Worker/CacheStorage$ rm ./</em></li>
-</ol>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u011754972/article/details/120764945">参考</a></p>
-<ol start="3" type="1">
-<li>anaconda/pkts conda clean 命令是对所有anaconda下的包进行搜索，不用再进入其他环境重复操作 conda clean -p 这个命令会检查哪些包没有在包缓存中被硬依赖到其他地方，并删除它们 conda clean -t 刚刚清理的缓存的packages，现在继续清理缓存的压缩包文件，代码如下：conda clean -t</li>
-</ol>
-<p>https://blog.csdn.net/zhouchen1998/article/details/124397874 https://blog.csdn.net/Robin_Pi/article/details/115004870</p>
-<ol start="4" type="1">
-<li>~/.local/share/Trash</li>
-</ol>
-<p>linux的垃圾箱</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/10/graduate/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/acm-icpc.png">
-      <meta itemprop="name" content="skk1faker">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="skk1faker 笔记">
-      <meta itemprop="description" content="登峰造极">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | skk1faker 笔记">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/10/10/graduate/" class="post-title-link" itemprop="url">graduate</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-10-10 13:19:28" itemprop="dateCreated datePublished" datetime="2023-10-10T13:19:28+08:00">2023-10-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-07 11:17:33" itemprop="dateModified" datetime="2024-04-07T11:17:33+08:00">2024-04-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%AF%95%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">毕业</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="abandon_the_bayer....">Abandon_the_Bayer....</h2>
-<h3 id="暗光处理主要思路">暗光处理主要思路</h3>
-<ol type="1">
-<li><p>使用两类网络，一类用语将rggb图像变为单一颜色灰度图像，主要是为了统一输入，因为有些输入图像格式为ryyb，这种格式得到的图片质量较高</p></li>
-<li><p>为了不让原始的彩色信息丢失，这里使用一个channel-wise的层，他可以接收单一颜色的灰度图片，也接受rggb颜色的图片，然后进行处理得到最终的结果 <img src="pipeline.png" /></p></li>
-</ol>
-<h2 id="数据集">数据集</h2>
-<p>sid数据集介绍(https://blog.csdn.net/tywwwww/article/details/131072339)</p>
-<h2 id="量化框架书写">量化框架书写</h2>
-<ul>
-<li>torch.fx使用介绍
-<ul>
-<li>计算图相关</li>
-</ul></li>
-<li>torch.nn.qat的作用
-<ul>
-<li>量化相关</li>
-</ul></li>
-<li>mqbench相关<a target="_blank" rel="noopener" href="https://mqbench.readthedocs.io/en/latest/user_guide/internal/learn_config.html">文档</a>
-<ul>
-<li>量化框架中层替换分别使用了pytorch中nn.qat库中的一些卷积层，以及mqbench.nn.qat、mqbench.nn.intrinsic.qat ==&gt; 主要为融合relu，batchnormal等层结构</li>
-</ul></li>
-<li>相关量化方法，mqbench中已经实现的部分 <a target="_blank" rel="noopener" href="https://mqbench.readthedocs.io/en/latest/get_started/support_matrix.html">内部含有相关论文</a></li>
-</ul>
-<h2 id="知识蒸馏">知识蒸馏</h2>
-<ul>
-<li>同样适用torch.fx框架书写蒸馏部分</li>
-<li>完成teacher蒸馏框架 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/353472061">特征蒸馏方案</a></li>
-</ul>
-<h3 id="中间层的选择">中间层的选择</h3>
-<p>选择中间层进行知识蒸馏需要考虑几个因素，包括模型的架构、任务的复杂性和计算资源。以下是一些选择中间层的指导原则：</p>
-<ol type="1">
-<li><p>特征的重要性：首先，需要分析模型中不同层的特征表示对于任务的重要性。通常来说，越接近模型输出的层包含的特征更加抽象和高级，而越靠近输入的层包含的特征更加原始和低级。根据任务的需要，选择与任务相关性较高的中间层进行蒸馏。</p></li>
-<li><p>模型大小和计算资源：蒸馏中间层会增加计算开销，因为要传递更多的特征表示。如果计算资源有限，你可能需要选择较少的中间层进行蒸馏，或者考虑对中间层进行进一步的降维或压缩。</p></li>
-<li><p>蒸馏目标：确定蒸馏的目标也很重要。如果你的目标是在小型模型中保留大型模型的全部知识，那么选择更多的中间层进行蒸馏可能是有益的。如果只关注某些方面的知识，可以选择与目标知识相关的中间层。</p></li>
-<li><p>实验和调整：最好的方法是进行一些实验和调整，以确定最佳的中间层选择。可以尝试不同的组合，并使用验证集来评估性能，然后选择性能最好的模型。</p></li>
-</ol>
-<p>总之，选择中间层需要综合考虑任务需求、计算资源和性能指标。根据你的具体情况和目标，可以灵活地调整中间层的选择来进行知识蒸馏。</p>
-<h3 id="使用hession矩阵的迹去判断一个层是否需要进行蒸馏">使用hession矩阵的迹去判断一个层是否需要进行蒸馏</h3>
-<ol type="1">
-<li>hession能判断出一个activation的改变是否能对整个网络影响很大，对于影响很大的层我们认为这是关键输出，也就是特征比较强的层.</li>
-</ol>
-<h2 id="存在问题">存在问题</h2>
-<ul>
-<li>downshuffle中的输入没有办法量化 <img src="输入未量化.png" alt="输入未量化" /></li>
-</ul>
-<h2 id="正在做的实验以及相关任务">正在做的实验以及相关任务：</h2>
-<ul>
-<li>[x] 增加了量化方法修改的功能（不是量化开发板的修改）</li>
-<li>[x] 修改结果保存部分的代码
-<ul>
-<li>[x] 能够完成最优结果的保存</li>
-<li>[x] 最优结果对应的检测结果</li>
-<li>[x] 当前模型结果</li>
-<li>[x] 当前模型保存（模型名含模型对应的袋鼠）</li>
-<li>[x] 每代检测结果txt文件</li>
-<li>[x] 完善量化方案配置（dsq，或者还是其他方案）</li>
-</ul></li>
-<li>[x] 启动对照实验
-<ul>
-<li>[x] 启动多个其他方案的量化
-<ul>
-<li>[x] dsq方法</li>
-</ul></li>
-<li>[x] 启动一个本方案的量化
-<ul>
-<li>[x] 多种蒸馏权重</li>
-<li>[ ] 不同位置的蒸馏层
-<ul>
-<li>[x] 底部</li>
-<li>[ ] 中部</li>
-<li>[ ] 开头</li>
-</ul></li>
-<li>[ ] 不同位置的量化效果(不加蒸馏)
-<ul>
-<li>[ ] 开头结尾</li>
-<li>[ ] 中间位置</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li><p>[x] 未加量化和蒸馏的代码泡一下 ## 论文章节</p></li>
-<li>[ ] 量化蒸馏与暗光增强的介绍
-<ul>
-<li>[x] 量化
-<ul>
-<li>[x] 多种量化方式的数学原理</li>
-<li>[x] 量化训练的几种方案，以及量化的难点</li>
-<li>[x] 量化如何进行训练
-<ul>
-<li>[x] 为什么需要统计参数</li>
-<li>[x] 训练怎么才能达到最好的效果（展示未使用pytorch.fx量化框架加载模型的结果）</li>
-</ul></li>
-</ul></li>
-<li>[ ] 暗光增强
-<ul>
-<li>[ ] 暗光网络</li>
-<li>[ ] 暗光的难点</li>
-</ul></li>
-<li>[ ] 蒸馏
-<ul>
-<li>[ ] 蒸馏的介绍</li>
-<li>[ ] 为什么引入蒸馏</li>
-</ul></li>
-</ul></li>
-<li>[ ] 量化蒸馏框架的介绍
-<ul>
-<li>[ ] 量化框架的主要技术</li>
-<li>[ ] 层融合原因
-<ul>
-<li>[ ] batchnormal、relu为什么需要需要融合</li>
-<li>[ ] 融合应该是一个什么样的计算方式</li>
-</ul></li>
-<li>[ ] 如何引入蒸馏</li>
-<li>[ ] 量化方法的选择</li>
-<li>[ ] 框架的方便性与广泛适用性演示（可以进通过几行代码来完成量化训练的步数）
-<ul>
-<li>[ ] 量化层插入展示</li>
-<li>[ ] 量化配置</li>
-<li>[ ] 框架使用使用</li>
-</ul></li>
-</ul></li>
-<li>[ ] 暗光网络的量化蒸馏方案
-<ul>
-<li>[ ] 如何加入蒸馏，为什么要这样加
-<ul>
-<li>[ ] 蒸馏层如何进行确定</li>
-<li>[ ] activation的hession矩阵迹计算原理</li>
-<li>[ ]</li>
-</ul></li>
-<li>[ ] 怎样实现量化
-<ul>
-<li>[ ] 位数为什么是前面和后面有所扩大</li>
-<li>[ ] 梯度反向传播方法方案</li>
-</ul></li>
-</ul></li>
-<li>[ ] 实验结果展示
-<ul>
-<li>[ ] 对比实验结果</li>
-</ul></li>
-</ul>
-<h3 id="sun-oct-15-171616-hkt-2023">Sun Oct 15 17:16:16 HKT 2023</h3>
-<p><del>1. 开启两个量化 + 蒸馏的实验 , 只有最后一层前一层的输出被蒸馏，使用了两个系数，一个是0.1，另一个是0.5（0.1的时间比较早，0.5是后放的）</del> <del>2. 重新开始实验，发现自己的量化统计方式有些问题，没有加入训练元素（可能实际上也不需要加上训练元素，因为加载的模型早就稳定了）</del> 3. 突然发现模型中量化模型没有加载原始模型，所以效果很差，所以这里开了第三个模型</p>
-<h3 id="mon-oct-16-173948-hkt-2023">Mon Oct 16 17:39:48 HKT 2023</h3>
-<ol type="1">
-<li>昨天起的实验没有成功（因为服务器的一些问题导致一直开在数据加载阶段），在这里加入了一些特殊层数量化的方案，将两段网络的输入和输出的都进行高位数的量化，同时将两段网络中结尾上一层的输出作为蒸馏的依据,配置如下，与以往的实验相比，效果已经好起来了。 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">quant :</span> <span class="literal">True</span></span><br><span class="line"><span class="attr">test :</span> <span class="literal">False</span></span><br><span class="line"><span class="attr">onnx :</span> <span class="literal">False</span></span><br><span class="line"><span class="attr">quant_teacher :</span> <span class="literal">True</span></span><br><span class="line"><span class="attr">gpu_id :</span> <span class="number">3</span></span><br><span class="line"><span class="attr">batch_size :</span> <span class="number">6</span></span><br><span class="line"><span class="attr">debug :</span> <span class="literal">False</span></span><br><span class="line"><span class="attr">pdb_debug :</span> <span class="literal">False</span></span><br><span class="line"><span class="attr">load_model :</span> <span class="string">./onnx/SID_weights_690000.pth</span></span><br><span class="line"><span class="attr">load_quant_model :</span> </span><br><span class="line"><span class="attr">load_teacher_model :</span> <span class="string">./onnx/SID_weights_690000.pth</span></span><br><span class="line"><span class="attr">config_file_path :</span> <span class="string">./configfile/aba_config.yaml</span></span><br><span class="line"><span class="attr">extra_quantizer_dict:</span> </span><br><span class="line">   <span class="attr">special_layer:</span> </span><br><span class="line">      <span class="attr">input_layer :</span> <span class="number">10</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv1.Conv1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv1.lrelu:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv1.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv9.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv9.lrelu_dup1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_out:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.color_conv1.Conv1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.color_conv1.lrelu:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.color_conv1.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.mono_conv1.Conv1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.mono_conv1.lrelu:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.mono_conv1.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.dual_conv9.Conv1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.dual_conv9.lrelu:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.dual_conv9.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.dual_conv9.lrelu_dup1:</span> </span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.DBLE_out:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line"><span class="attr">output_layer_list :</span> [<span class="string">&#x27;DBLE.dual_conv9.lrelu_dup1&#x27;</span>, <span class="string">&#x27;DBF.DBF_conv9.lrelu_dup1&#x27;</span>]</span><br><span class="line"><span class="attr">distill_config :</span> [<span class="string">&#x27;DBLE.dual_conv9.lrelu_dup1&#x27;</span>, <span class="string">&#x27;DBF.DBF_conv9.lrelu_dup1&#x27;</span>]</span><br><span class="line"><span class="attr">distill_coeff :</span> [<span class="number">0.7</span>, <span class="number">0.7</span>]</span><br></pre></td></tr></table></figure> ### Fri Oct 20 09:41:04 HKT 2023</li>
-<li>启动了一个没有蒸馏的实验,剩余实验正在修改代码</li>
-</ol>
-<h3 id="wed-oct-24-104548-hkt-2023">Wed Oct 24 10:45:48 HKT 2023</h3>
-<p>启动了一个蒸馏加权系数小一点的网络，发现权重越小效果越好,这会导致开始的情况不是那么坏</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default-index/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default-index/">1</a><span class="space">&hellip;</span><a class="page-number" href="/default-index/page/3/">3</a><span class="page-number current">4</span>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default-index/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default-index/">1</a><span class="space">&hellip;</span><a class="page-number" href="/default-index/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/default-index/page/5/">5</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default-index/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1656,6 +1701,8 @@ Tr(A)\_{m + 1} - Tr(A)\_{m} &lt; T
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"skk1faker/blog_source","issue_term":"pathname","theme":"github-dark"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
 
 </body>
 </html>
