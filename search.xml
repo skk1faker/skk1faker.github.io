@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>c语言变长数组</title>
+    <url>/2024/04/09/c%E8%AF%AD%E8%A8%80%E5%8F%98%E9%95%BF%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<h1 id="c语言变长数组的实现">c语言变长数组的实现</h1>
+<p>变长数组指的是数组的长度可以任意改变，而不是可以定义任意长度的数组</p>
+<p>这里给出他的写法</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ss</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> n;      <span class="comment">// 变长数组的长度</span></span><br><span class="line">  <span class="type">char</span> a[<span class="number">0</span>];  <span class="comment">// 不可写为char *a, 否则会报错</span></span><br><span class="line">  <span class="comment">// 注意这里的a[0]不占内存，但是*a占内存</span></span><br><span class="line">  <span class="comment">// 因为sizeof(a) == 0, 所以需要一个n来给出当前变长数组的长度。</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> n;</span><br><span class="line">  n = <span class="number">10</span>;</span><br><span class="line">  <span class="type">int</span> saf[n];           <span class="comment">// 这不是一个变长数组，因为一旦定义之后，就不能改变大小</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%ld&quot;</span>,<span class="built_in">sizeof</span>(saf));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 定义变长数组大小为n</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ss</span> *b = (<span class="keyword">struct</span> ss *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> ss) + n * <span class="built_in">sizeof</span>(<span class="type">char</span>)); </span><br><span class="line">  b-&gt;n = n;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 现在改变数组的长度</span></span><br><span class="line">  n =  <span class="number">100</span>;</span><br><span class="line">  b = (<span class="keyword">struct</span> ss *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> ss) + n * <span class="built_in">sizeof</span>(<span class="type">char</span>));</span><br><span class="line">  b-&gt;n = n;</span><br><span class="line"></span><br><span class="line">  <span class="type">char</span> c[<span class="number">10</span>] = <span class="string">&quot;wfasfa&quot;</span>;</span><br><span class="line">  <span class="built_in">memcpy</span>(b-&gt;a,c,<span class="built_in">sizeof</span>(c));</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>,b-&gt;a);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 变长数组的大小不能使用sizeof得到</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%ld\n&quot;</span>,<span class="built_in">sizeof</span>(b-&gt;a));</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ss</span> *d = (<span class="keyword">struct</span> ss *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> ss) + <span class="number">10</span> * <span class="built_in">sizeof</span>(<span class="type">char</span> ));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>参考自：<br />
+https://stackoverflow.com/questions/3607859/meaning-of-char-arr0<br />
+https://blog.csdn.net/hyqsong/article/details/50863746<br />
+https://blog.csdn.net/ligeforrent/article/details/48639277</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>hexo界面</title>
+    <url>/2024/04/09/hexo%E7%95%8C%E9%9D%A2/</url>
+    <content><![CDATA[<h1 id="参考">参考</h1>
+<p><a href="https://mongolian.github.io/2018/07/16/Hexo%E7%BE%8E%E5%8C%96/">参考1</a><br />
+<a href="https://blog.csdn.net/TomAndersen/article/details/104872852">如何加入背景图片</a><br />
+<a href="https://juejin.cn/post/7217267332656742460">hexo界面优化</a></p>
+]]></content>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>tarjan</title>
     <url>/2024/03/31/tarjan/</url>
     <content><![CDATA[<h1 id="参考资料">参考资料</h1>
@@ -169,6 +194,16 @@
       </tags>
   </entry>
   <entry>
+    <title>clash配置方法</title>
+    <url>/2024/03/11/clash%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>订阅地址后面加&amp;client=clash，同时订阅的命令使用<code>wget -O /home/skt1faker/VPN/clash/config.yaml "[订阅地址]&amp;client=clash"</code>，例如： <code>wget -O /home/skt1faker/VPN/clash/config.yaml "https://getnode.dksb.store/subscribe/152449/TBfADuRZNOTJ&amp;client=clash"</code></p>
+<p>注意最后修改<code>/usr/bin/renew_subcribe</code>中的订阅链接</p>
+]]></content>
+      <tags>
+        <tag>代理</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>清理linux垃圾内容</title>
     <url>/2023/10/13/clean-cachefile/</url>
     <content><![CDATA[<h1 id="一些文件夹">一些文件夹</h1>
@@ -194,16 +229,6 @@
       </categories>
       <tags>
         <tag>linux_manager</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>clash配置方法</title>
-    <url>/2024/03/11/clash%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>订阅地址后面加&amp;client=clash，同时订阅的命令使用<code>wget -O /home/skt1faker/VPN/clash/config.yaml "[订阅地址]&amp;client=clash"</code>，例如： <code>wget -O /home/skt1faker/VPN/clash/config.yaml "https://getnode.dksb.store/subscribe/152449/TBfADuRZNOTJ&amp;client=clash"</code></p>
-<p>注意最后修改<code>/usr/bin/renew_subcribe</code>中的订阅链接</p>
-]]></content>
-      <tags>
-        <tag>代理</tag>
       </tags>
   </entry>
   <entry>

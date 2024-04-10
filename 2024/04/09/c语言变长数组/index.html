@@ -19,26 +19,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"skk1faker.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","width":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="article">
-<meta property="og:title" content="tire树-字典树">
-<meta property="og:url" content="https://skk1faker.github.io/2024/01/15/tire%E6%A0%91-%E5%AD%97%E5%85%B8%E6%A0%91/index.html">
+    <meta name="description" content="c语言变长数组的实现 变长数组指的是数组的长度可以任意改变，而不是可以定义任意长度的数组 这里给出他的写法 123456789101112131415161718192021222324252627282930313233343536373839404142#include&lt;string.h&gt;#include&lt;stdio.h&gt;struct ss&#123;  int n;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="c语言变长数组">
+<meta property="og:url" content="https://skk1faker.github.io/2024/04/09/c%E8%AF%AD%E8%A8%80%E5%8F%98%E9%95%BF%E6%95%B0%E7%BB%84/index.html">
 <meta property="og:site_name" content="skk1faker 笔记">
+<meta property="og:description" content="c语言变长数组的实现 变长数组指的是数组的长度可以任意改变，而不是可以定义任意长度的数组 这里给出他的写法 123456789101112131415161718192021222324252627282930313233343536373839404142#include&lt;string.h&gt;#include&lt;stdio.h&gt;struct ss&#123;  int n;">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-01-15T08:18:28.000Z">
-<meta property="article:modified_time" content="2024-04-07T03:17:33.788Z">
+<meta property="article:published_time" content="2024-04-09T02:03:18.860Z">
+<meta property="article:modified_time" content="2024-04-09T02:05:32.595Z">
 <meta property="article:author" content="skk1faker">
-<meta property="article:tag" content="tire树">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://skk1faker.github.io/2024/01/15/tire%E6%A0%91-%E5%AD%97%E5%85%B8%E6%A0%91/">
+<link rel="canonical" href="https://skk1faker.github.io/2024/04/09/c%E8%AF%AD%E8%A8%80%E5%8F%98%E9%95%BF%E6%95%B0%E7%BB%84/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://skk1faker.github.io/2024/01/15/tire%E6%A0%91-%E5%AD%97%E5%85%B8%E6%A0%91/","path":"2024/01/15/tire树-字典树/","title":"tire树-字典树"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://skk1faker.github.io/2024/04/09/c%E8%AF%AD%E8%A8%80%E5%8F%98%E9%95%BF%E6%95%B0%E7%BB%84/","path":"2024/04/09/c语言变长数组/","title":"c语言变长数组"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>tire树-字典树 | skk1faker 笔记</title>
+<title>c语言变长数组 | skk1faker 笔记</title>
   
 
 
@@ -124,7 +125,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -137,6 +138,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#c%E8%AF%AD%E8%A8%80%E5%8F%98%E9%95%BF%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">c语言变长数组的实现</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -200,7 +202,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2024/01/15/tire%E6%A0%91-%E5%AD%97%E5%85%B8%E6%A0%91/">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2024/04/09/c%E8%AF%AD%E8%A8%80%E5%8F%98%E9%95%BF%E6%95%B0%E7%BB%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/acm-icpc.png">
@@ -213,12 +215,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="tire树-字典树 | skk1faker 笔记">
+      <meta itemprop="name" content="c语言变长数组 | skk1faker 笔记">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          tire树-字典树
+          c语言变长数组
         </h1>
 
         <div class="post-meta-container">
@@ -228,15 +230,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2024-01-15 16:18:28" itemprop="dateCreated datePublished" datetime="2024-01-15T16:18:28+08:00">2024-01-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-07 11:17:33" itemprop="dateModified" datetime="2024-04-07T11:17:33+08:00">2024-04-07</time>
+      <time title="创建时间：2024-04-09 10:03:18 / 修改时间：10:05:32" itemprop="dateCreated datePublished" datetime="2024-04-09T10:03:18+08:00">2024-04-09</time>
     </span>
 
   
@@ -248,7 +244,14 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
+    <div class="post-body" itemprop="articleBody"><h1 id="c语言变长数组的实现">c语言变长数组的实现</h1>
+<p>变长数组指的是数组的长度可以任意改变，而不是可以定义任意长度的数组</p>
+<p>这里给出他的写法</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ss</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> n;      <span class="comment">// 变长数组的长度</span></span><br><span class="line">  <span class="type">char</span> a[<span class="number">0</span>];  <span class="comment">// 不可写为char *a, 否则会报错</span></span><br><span class="line">  <span class="comment">// 注意这里的a[0]不占内存，但是*a占内存</span></span><br><span class="line">  <span class="comment">// 因为sizeof(a) == 0, 所以需要一个n来给出当前变长数组的长度。</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> n;</span><br><span class="line">  n = <span class="number">10</span>;</span><br><span class="line">  <span class="type">int</span> saf[n];           <span class="comment">// 这不是一个变长数组，因为一旦定义之后，就不能改变大小</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%ld&quot;</span>,<span class="built_in">sizeof</span>(saf));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 定义变长数组大小为n</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ss</span> *b = (<span class="keyword">struct</span> ss *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> ss) + n * <span class="built_in">sizeof</span>(<span class="type">char</span>)); </span><br><span class="line">  b-&gt;n = n;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 现在改变数组的长度</span></span><br><span class="line">  n =  <span class="number">100</span>;</span><br><span class="line">  b = (<span class="keyword">struct</span> ss *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> ss) + n * <span class="built_in">sizeof</span>(<span class="type">char</span>));</span><br><span class="line">  b-&gt;n = n;</span><br><span class="line"></span><br><span class="line">  <span class="type">char</span> c[<span class="number">10</span>] = <span class="string">&quot;wfasfa&quot;</span>;</span><br><span class="line">  <span class="built_in">memcpy</span>(b-&gt;a,c,<span class="built_in">sizeof</span>(c));</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>,b-&gt;a);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 变长数组的大小不能使用sizeof得到</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%ld\n&quot;</span>,<span class="built_in">sizeof</span>(b-&gt;a));</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">ss</span> *d = (<span class="keyword">struct</span> ss *)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> ss) + <span class="number">10</span> * <span class="built_in">sizeof</span>(<span class="type">char</span> ));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>参考自：<br />
+https://stackoverflow.com/questions/3607859/meaning-of-char-arr0<br />
+https://blog.csdn.net/hyqsong/article/details/50863746<br />
+https://blog.csdn.net/ligeforrent/article/details/48639277</p>
 
     </div>
 
@@ -275,22 +278,16 @@
   </div>
 </div>
 
-          <div class="post-tags">
-              <a href="/tags/tire%E6%A0%91/" rel="tag"># tire树</a>
-          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2024/01/15/%E7%89%9B%E5%AE%A2%E7%BB%83%E4%B9%A0%E8%B5%9B120-D%E9%A2%98-%E5%8C%BA%E9%97%B4%E5%BC%82%E6%88%96%E9%97%AE%E9%A2%98/" rel="prev" title="牛客练习赛120-D题-区间异或问题">
-                  <i class="fa fa-angle-left"></i> 牛客练习赛120-D题-区间异或问题
+                <a href="/2024/04/09/hexo%E7%95%8C%E9%9D%A2/" rel="prev" title="hexo界面">
+                  <i class="fa fa-angle-left"></i> hexo界面
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2024/01/21/cf1909E%E6%9A%B4%E5%8A%9B%E9%A2%98%E5%AD%98%E5%9C%A8%E7%9A%84%E7%89%B9%E7%82%B9/" rel="next" title="cf1909E暴力题存在的特点">
-                  cf1909E暴力题存在的特点 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
