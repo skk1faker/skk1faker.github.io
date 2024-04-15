@@ -1745,6 +1745,16 @@ void get_gra(int posi,int root,int total_size){//,int &amp;zx,int min_element /*
       </tags>
   </entry>
   <entry>
+    <title>蛋挞制作</title>
+    <url>/2024/02/20/%E8%9B%8B%E6%8C%9E%E5%88%B6%E4%BD%9C/</url>
+    <content><![CDATA[<ol type="1">
+<li>中筋面粉 150g(可以使用一半低筋 + 一半高筋)</li>
+<li>盐2g</li>
+<li>水80g</li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
     <title>背包问题中当背包空间值过大，而价值的值较小应如果处理</title>
     <url>/2024/01/21/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E4%B8%AD%E5%BD%93%E8%83%8C%E5%8C%85%E7%A9%BA%E9%97%B4%E5%80%BC%E8%BF%87%E5%A4%A7%EF%BC%8C%E8%80%8C%E4%BB%B7%E5%80%BC%E7%9A%84%E5%80%BC%E8%BE%83%E5%B0%8F%E5%BA%94%E5%A6%82%E6%9E%9C%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<h1 id="题意">题意</h1>
@@ -1760,16 +1770,6 @@ void get_gra(int posi,int root,int total_size){//,int &amp;zx,int min_element /*
         <tag>dp</tag>
         <tag>背包</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>蛋挞制作</title>
-    <url>/2024/02/20/%E8%9B%8B%E6%8C%9E%E5%88%B6%E4%BD%9C/</url>
-    <content><![CDATA[<ol type="1">
-<li>中筋面粉 150g(可以使用一半低筋 + 一半高筋)</li>
-<li>盐2g</li>
-<li>水80g</li>
-</ol>
-]]></content>
   </entry>
   <entry>
     <title>质数相关概率算法</title>

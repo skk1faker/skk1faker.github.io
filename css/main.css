@@ -1300,7 +1300,7 @@ pre code {
   font-family: Lato, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-size: 1.375em;
   font-weight: normal;
-  line-height: 1.5;
+  line-height: 0;
   margin: 0;
 }
 .site-subtitle {
@@ -2831,7 +2831,7 @@ header.header {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #b369d0;
+  background: #db7d88;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
