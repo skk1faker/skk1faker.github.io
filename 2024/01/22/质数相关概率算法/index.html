@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"skk1faker.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","width":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Miller Rabin快速判断质数 参考 参考 主要使用费马小定理。 费马小定理如下：若P为质数，则有如下表达式。 \[ a^{P - 1}&#x3D;1(mod\ P) \]   但是，这个定理的否定是不成立的。即如下说法不成立，“若P为合数，则\(a^{P - 1} \neq 1(mod\ P)\)”, 也就是说，P为合数时也有一定概率导致\(a^{P - 1}&#x3D;1(mod\ P)\)。 一个命题的逆">
+<meta property="og:type" content="article">
+<meta property="og:title" content="质数相关概率算法">
+<meta property="og:url" content="https://skk1faker.github.io/2024/01/22/%E8%B4%A8%E6%95%B0%E7%9B%B8%E5%85%B3%E6%A6%82%E7%8E%87%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="skk1faker 笔记">
+<meta property="og:description" content="Miller Rabin快速判断质数 参考 参考 主要使用费马小定理。 费马小定理如下：若P为质数，则有如下表达式。 \[ a^{P - 1}&#x3D;1(mod\ P) \]   但是，这个定理的否定是不成立的。即如下说法不成立，“若P为合数，则\(a^{P - 1} \neq 1(mod\ P)\)”, 也就是说，P为合数时也有一定概率导致\(a^{P - 1}&#x3D;1(mod\ P)\)。 一个命题的逆">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-22T09:30:03.000Z">
+<meta property="article:modified_time" content="2025-02-22T04:04:39.680Z">
+<meta property="article:author" content="skk1faker">
+<meta property="article:tag" content="数学">
+<meta property="article:tag" content="概率算法">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://skk1faker.github.io/2024/01/22/%E8%B4%A8%E6%95%B0%E7%9B%B8%E5%85%B3%E6%A6%82%E7%8E%87%E7%AE%97%E6%B3%95/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://skk1faker.github.io/2024/01/22/%E8%B4%A8%E6%95%B0%E7%9B%B8%E5%85%B3%E6%A6%82%E7%8E%87%E7%AE%97%E6%B3%95/","path":"2024/01/22/质数相关概率算法/","title":"质数相关概率算法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>质数相关概率算法 | skk1faker 笔记</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">skk1faker 笔记</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-navigation"><a href="/navigation" rel="section"><i class="fa fa-user fa-fw"></i>导航</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#miller-rabin%E5%BF%AB%E9%80%9F%E5%88%A4%E6%96%AD%E8%B4%A8%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">Miller Rabin快速判断质数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pollard-roh%E5%BF%AB%E9%80%9F%E5%9B%A0%E5%BC%8F%E5%88%86%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">pollard-roh快速因式分解</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="skk1faker"
+      src="/images/acm-icpc.png">
+  <p class="site-author-name" itemprop="name">skk1faker</p>
+  <div class="site-description" itemprop="description">登峰造极</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skk1faker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skk1faker" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:skk1faker@163.com" title="E-Mail → mailto:skk1faker@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com" rel="noopener me" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2024/01/22/%E8%B4%A8%E6%95%B0%E7%9B%B8%E5%85%B3%E6%A6%82%E7%8E%87%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="质数相关概率算法 | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          质数相关概率算法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-01-22 17:30:03" itemprop="dateCreated datePublished" datetime="2024-01-22T17:30:03+08:00">2024-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-02-22 12:04:39" itemprop="dateModified" datetime="2025-02-22T12:04:39+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="miller-rabin快速判断质数">Miller Rabin快速判断质数</h1>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/646602750">参考</a> <a
+target="_blank" rel="noopener" href="https://www.cnblogs.com/Miracevin/p/9697260.html">参考</a></p>
+<p>主要使用费马小定理。<br />
+费马小定理如下：若P为质数，则有如下表达式。 <span
+class="math display">\[
+a^{P - 1}=1(mod\ P)
+\]</span></p>
+<p>  但是，这个定理的否定是不成立的。即如下说法<strong>不成立</strong>，“若P为合数，则<span
+class="math inline">\(a^{P - 1} \neq 1(mod\ P)\)</span>”,
+也就是说，P为合数时也有一定概率导致<span class="math inline">\(a^{P -
+1}=1(mod\ P)\)</span>。</p>
+<p>一个命题的逆否命题与原命题同真假，所以当<span
+class="math inline">\(a^{P - 1}\neq
+1(mod(P))\)</span>时，P必然为合数。</p>
+<p>由上述可知P满足<span class="math inline">\(a^{P - 1}=1(mod\
+P)\)</span>，并不可以说明P为质数，但是如果对多个a成立，那么P为质数的可能行就大大增加，所以可以选取一些a来做质数筛选。</p>
+<p>底数a的选择一般如下：<br />
+当<span class="math inline">\(P \leq 2^{32}\)</span>时，<span
+class="math inline">\(a\in{2,7,61}\)</span><br />
+当<span class="math inline">\(P \leq 2^{64}\)</span>时，<span
+class="math inline">\(a\in{2,325,9375,28178,450775,9780504,1795265022}\)</span><br />
+当<span class="math inline">\(P \leq 2^{78}\)</span>时，<span
+class="math inline">\(a\in{2,3,5,7,11,13,17,19,23,29,31,37}\)</span></p>
+<p>一个加速的方法，已知<span class="math inline">\(a^{2} mod(p) =
+1\)</span>则有 <span class="math display">\[
+\begin{align*} (a^{2} - 1) mod(p) &amp;= 0 \\ (a + 1)(a - 1)mod(p)
+&amp;= 1 \end{align*}
+\]</span></p>
+<p>如果p为质数，由于质数不能进行再次分解，于是会<span
+class="math inline">\((a + 1)mod(p) = 0\)</span>或<span
+class="math inline">\((a - 1)mod(p) =
+0\)</span>成立，这就是二次探测定理：</p>
+<p>  若p为质数，且<span
+class="math inline">\(a^{2}mod(P)=1\)</span>，则<span
+class="math inline">\(a\ mod(p) = \pm 1\)</span> 。</p>
+<p>有了这个定理，在计算<span class="math inline">\(a^{p - 1}
+mod(p)\)</span>时，设<span class="math inline">\(p - 1 =
+2^{k}t\)</span>，<span class="math inline">\(v =
+a^{t}\)</span>，由于p是偶数时不用判断，p为奇数时必然有<span
+class="math inline">\(k \geq 1\)</span>，之后计算k次<span
+class="math inline">\(v_{new} = v^{2} mod(p),v =
+v_{new}\)</span>，当<span class="math inline">\(v_{new} ==
+1\)</span>时必然有<span class="math inline">\(v = 1 || v = p -
+1\)</span>，否则说明p不是质数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> lll __int128</span></span><br><span class="line"><span class="function">ll <span class="title">mul</span><span class="params">(ll a,ll b,ll mod)</span></span>&#123;</span><br><span class="line">  ll ans = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">while</span>(b)&#123;</span><br><span class="line">    <span class="keyword">if</span>(b &amp; <span class="number">1</span>)ans = ((lll)ans * (lll)a) % (lll)mod;</span><br><span class="line">    a = ((lll)a * (lll)a) % ((lll)mod);</span><br><span class="line">    b /= <span class="number">2</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">is_prime</span><span class="params">(ll x)</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(x == <span class="number">1</span>)<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">if</span>(x % <span class="number">2</span> == <span class="number">0</span>)<span class="keyword">return</span> x == <span class="number">2</span>;</span><br><span class="line">  vector&lt;<span class="type">int</span>&gt;b&#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">11</span>,<span class="number">13</span>,<span class="number">17</span>,<span class="number">23</span>,<span class="number">29</span>,<span class="number">31</span>,<span class="number">37</span>,<span class="number">61</span>,<span class="number">24251</span>&#125;;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; b.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(x == b[i])<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  ll k = x - <span class="number">1</span>;</span><br><span class="line">  ll t = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span>((k &amp; <span class="number">1</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">    k /= <span class="number">2</span>;</span><br><span class="line">    t++;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; b.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">    ll v = <span class="built_in">mul</span>(b[i],k,x);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; t;i++)&#123;</span><br><span class="line">      ll next_v = ((lll)v * (lll)v) % (lll)x;       </span><br><span class="line">      <span class="keyword">if</span>(next_v == <span class="number">1</span>)&#123;      <span class="comment">//当前值为1，则检查上一次值是否为1或者x - 1，不成立说明x不是质数</span></span><br><span class="line">        <span class="keyword">if</span>(v != x - <span class="number">1</span> &amp;&amp; v != <span class="number">1</span>)</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        v = next_v;         <span class="comment">// 后面无需判断，后面都是1</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      v = next_v;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(v != <span class="number">1</span>)<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="pollard-roh快速因式分解">pollard-roh快速因式分解</h1>
+<p><a
+target="_blank" rel="noopener" href="https://czicz.cn/2020/09/03/pollard-rho-suan-fa/">重要参考1</a><br />
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/267884783">重要参考2</a><br />
+<a
+target="_blank" rel="noopener" href="https://www.studocu.com/row/document/changsha-university-of-science-and-technology/computer-algorithm/pollard-rho%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3-changsha-university-of-science-and-technology/26399430">参考</a><br />
+<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/qq_26131031/article/details/124135869">参考3</a></p>
+<p>对这个算法参考了诸多资料后才明白处理过程以及原因，感谢以上作者。</p>
+<ol type="1">
+<li>朴素算法 以往进行因式分解的算法时间复杂度为<span
+class="math inline">\(O(\sqrt{n})\)</span>，算法如下：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> P;  <span class="comment">// 要分解的数</span></span><br><span class="line">cin&gt;&gt;P;</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">2</span>;i*i &lt;= P ;i++)&#123;</span><br><span class="line">    <span class="keyword">while</span>(P % i == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">/*相关统计放在这里*/</span></span><br><span class="line">        P/=i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码中i就是P的质因数，分解的时间为<span
+class="math inline">\(\sqrt(n)\)</span>。</p>
+<ol start="2" type="1">
+<li>概率优化 于是呢，有人想能不能将这个过程使用概率做 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> P;  <span class="comment">// 要分解的数</span></span><br><span class="line">    cin&gt;&gt;P;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_factor</span><span class="params">(<span class="type">int</span> P)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">isprim</span>(P))&#123;</span><br><span class="line">        <span class="keyword">return</span> P;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="type">int</span> ans = <span class="number">2</span> + (<span class="built_in">rand</span>() % (<span class="built_in">sqrt</span>(P) - <span class="number">2</span>);</span><br><span class="line">        <span class="keyword">if</span>(P % ans == <span class="number">0</span>)<span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+假如因子为q，那么在<span
+class="math inline">\([2,\sqrt{n}]\)</span>中寻找q的概率为<span
+class="math inline">\(\frac{1}{\sqrt{n} - 1}\)</span>。期望在<span
+class="math inline">\(\sqrt{n} -
+1\)</span>次找到因子，和原先的算法时间复杂度差不多，而且概率方法时间复杂度难控制。<b><font color=red>注意</font></b>，这里质数判断算法采用Miller方法判断，可以在很短的时间内判断出质数。</li>
+</ol>
+<p>随机取出的数字可能和分解的目标存在公因子，为不让这次取值浪费，可以使用gcd来完成改进
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> P;  <span class="comment">// 要分解的数</span></span><br><span class="line">    cin&gt;&gt;P;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_factor</span><span class="params">(<span class="type">int</span> P)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">isprim</span>(P))&#123;</span><br><span class="line">        <span class="keyword">return</span> P;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="type">int</span> temp = <span class="number">2</span> + (<span class="built_in">rand</span>() % (P - <span class="number">2</span>);</span><br><span class="line">        <span class="type">int</span> ans = <span class="built_in">gcd</span>(temp,P);</span><br><span class="line">        <span class="keyword">if</span>(ans != <span class="number">1</span>)<span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样的优化是的不光因子q可以让算法返回，2q,3q,4q,5q...都可以满足，使得中奖概率增大。但算法依旧有优化的空间。如果在枚举数字的时候，通过两次枚举，是否可以增加枚举出q的概率呢？</p>
+<p>答案是对的，x1、x2为随机枚举的数字，|x2 -
+x1|作为最终枚举的结果，那么枚举出q的概率为<span
+class="math inline">\(\frac{2P}{P^{2}} =
+\frac{2}{P}\)</span>，因为对于任意一数x1，|x2 - x1| ==
+q的x2有两个。可见两次枚举就使得概率增大了。这个原理和生日悖论有关：</p>
+<ol start="3" type="1">
+<li>生日悖论</li>
+</ol>
+<p>生日悖论可以表述为：“一个房间里有23个人，则他们中有两人生日相同的概率超过一半”，证明通过不等式即可：<br />
+k个人中所有人生日都不一样的概率为： <span class="math display">\[
+p(k) = \frac{A_{k}^{365}}{365^{k}} = \frac{365}{365} \times \frac{365 -
+1}{365} \times ... \times \frac{365 - k + 1}{365}
+\]</span> 所以k个人中存在生日一样的人概率为1-p{k}</p>
+<p>使用不等式<span class="math inline">\(1 + x &lt;
+e^{x}\)</span>将p(k)上界得出 <span class="math display">\[
+\begin{align*}
+p(k) &amp;= \frac{365}{365} \times \frac{365 - 1}{365} \times ... \times
+\frac{365 - k + 1}{365}\\
+     &amp;= 1 \times (1 - \frac{1}{365}) \times (1 -
+\frac{2}{365})\times ... \times (1 - \frac{k - 1}{365})
+     &amp;\leq e^{\frac{0 - 1 - 2 - 3 .... - (k - 1)}{365}}
+\end{align*}\]</span></p>
+<p><span class="math display">\[
+1 - p(k) \geq 1 - e^{\frac{-k(k-1)}{730}}
+\]</span></p>
+<p>当1-p(k)的下线超过50%时，k = 23。</p>
+<p>生日悖论告诉我们，只要在某个范围内不断的生成随机数，很快就会得到两个模相等的数。</p>
+<ol start="4" type="1">
+<li>悖论优化</li>
+</ol>
+<p>  通过上面可以知道，如果随机取很多个<span class="math inline">\(x =
+{x_{1},x_{2},...,x_{s}}\)</span>，那么对任意i、j、q，当s越大<span
+class="math inline">\((x_{i} - x_{j})\ mod\ q =
+0\)</span>越容易成立（p看做一年时间，x看做生日）。如果P因子为q，那么gcd(|x_{i}
+-
+x_{j}|,P)很容易得到因子q。已有论文已经证明为了能得到因子，枚举的数量要在<span
+class="math inline">\(O(P^{\frac{1}{4}})\)</span>左右，才能得到因子。如果对这P^{1/4}个数两两作差然后计算gcd，时间复杂度变为<span
+class="math inline">\(O((P^{\frac{1}{4}})^{2}
+log_{2}P)\)</span>，其中<span
+class="math inline">\(log_{2}\)</span>是由gcd计算产生的。这样的方法必然会退化，所以必须牺牲一些东西来换取另一些东西。</p>
+<p>  显然数的两两组合会导致效率降低，所以索性就减少两两组合的次数，相应的会降低找到因子q的概率，pollard-roh找到了一种较优的策略，以下是我个人理解。</p>
+<p>  pollard-roh使用伪随机数，利用<span class="math inline">\(f(x) =
+(x^{2} + c) % P\)</span>生成所需随机数列，所生成数列有两个性质</p>
+<ul>
+<li>生成序列最终会发生循环</li>
+<li><span class="math inline">\(f(x) - f(y)\ mod(x - y) = (x^{2} -
+y^{2})\ mod(x - y) = (x + y)(x - y) \ mod(x - y) = 0\)</span></li>
+</ul>
+<p>  第一个特点决定了随机数生成一定时间之后会发生重复，所以需要再次进行生成。<br />
+  第二个特点则表示数列<span class="math inline">\(x =
+{x_{1},x_{2},...,x_{s}}\)</span>中下标差一样的两个数字含有相同因子，所以某一下标差相等的两元素做完gcd之后，其他元素可以不做（但这并不代表其他下标差一致的元素与P做gcd操作后依旧可能会产生不为1的结果,因为观察上面的式子中，f(x)
+- f(y)中还有因子(x +
+y)）。为了能让算法能取到不同下标差的元素，同时还能检测是否出现环，这时需要借用Flody判圈法。</p>
+<p>  flody判圈中一个经典的思路就是两个指针，一个快速每次前进2单位，一个慢速每次前进1单位。放在这里刚好，快速的指针-慢速的指针下标差刚好可以遍历完所有下标差，同时通过快慢指针可以知道发生循环的时刻。代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(x,c,P)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (x * x + c) % N;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> pollard-<span class="built_in">rho</span>(<span class="type">int</span> P)&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">is_prim</span>(P))<span class="keyword">return</span> P</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="type">int</span> c = <span class="built_in">rand</span>() % (n - <span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> t = <span class="built_in">f</span>(<span class="number">0</span>,c,P);</span><br><span class="line">        <span class="type">int</span> r = <span class="built_in">f</span>(t,c,P);</span><br><span class="line">        <span class="keyword">while</span>(t != r)&#123;</span><br><span class="line">            <span class="type">int</span> ans = <span class="built_in">gcd</span>(<span class="built_in">abs</span>(t - r),P);</span><br><span class="line">            <span class="keyword">if</span>(ans &gt; <span class="number">1</span>)<span class="keyword">return</span> ans;      </span><br><span class="line">            t = <span class="built_in">f</span>(t,c,P);</span><br><span class="line">            r = <span class="built_in">f</span>(<span class="built_in">f</span>(r,c,P),c,P);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 没有找到因子，重新选取P</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="5" type="1">
+<li>gcd优化,使用倍增方案</li>
+</ol>
+<p>若<span class="math inline">\(gcd(x,P) \neq 1\)</span>，<span
+class="math inline">\(gcd(y,P) \neq 1\)</span>，则<span
+class="math inline">\(gcd(xy,P)\neq 1\)</span><br />
+由于gcd的时间复杂度为log，为了能减少gcd的次数，基于上式子可以将多个<span
+class="math inline">\(|x_{i} -
+x_{j}|\)</span>连乘，与P做gcd，会找到因式，同时减少了gcd的次数</p>
+<p>我们可每隔<code>1，2，4，8 ...</code>个数连乘一下，这样求解gcd的次数变为<span
+class="math inline">\(log(P^{\frac{1}{4}})\)</span>次，所以总时间复杂度变为<span
+class="math inline">\(O(P^{\frac{1}{4}} +
+log(P^{\frac{1}{4}})log(P))\)</span>，连乘法注意取模，因为gcd(a % P, P)
+= gcd(a,P);取模防止连乘的数过大。</p>
+<p>上述方案依旧有一定缺陷，遇到后面计算一次gcd的时间越大，所以也可以将相隔距离从指数的距离改为固定距离C，时间复杂度变为<span
+class="math inline">\(O(P^{\frac{1}{4}} +
+\frac{P^{\frac{1}{4}}logP}{C})\)</span>，当<span class="math inline">\(C
+&gt; log(P)\)</span>时，时间复杂度为<span
+class="math inline">\(O(n^{\frac{1}{4}})\)</span></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">Pollard_Rho</span><span class="params">(ll N)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (N == <span class="number">4</span>)     <span class="comment">// 注意特判一下</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">is_prime</span>(N))</span><br><span class="line">        <span class="keyword">return</span> N;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ll c = <span class="built_in">randint</span>(<span class="number">1</span>, N - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">auto</span> f = [=](ll x) &#123; <span class="built_in">return</span> ((lll)x * x + c) % N; &#125;;</span><br><span class="line">        ll t = <span class="number">0</span>, r = <span class="number">0</span>, p = <span class="number">1</span>, q;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">128</span>; ++i) <span class="comment">// 令固定距离C=128</span></span><br><span class="line">            &#123;</span><br><span class="line">                t = <span class="built_in">f</span>(t), r = <span class="built_in">f</span>(<span class="built_in">f</span>(r));</span><br><span class="line">                <span class="keyword">if</span> (t == r || (q = ((lll)p * <span class="built_in">abs</span>(t - r)) % N) == <span class="number">0</span>) <span class="comment">// 如果发现环，或者积即将为0，退出，注意这里使用等式gcd(a % b,b) = gcd(a,b)</span></span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                p = q;</span><br><span class="line">            &#125;</span><br><span class="line">            ll d = <span class="built_in">gcd</span>(p, N);</span><br><span class="line">            <span class="keyword">if</span> (d &gt; <span class="number">1</span>)</span><br><span class="line">                <span class="keyword">return</span> d;</span><br><span class="line">        &#125; <span class="keyword">while</span> (t != r);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="skk1faker 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="skk1faker 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag"># 数学</a>
+              <a href="/tags/%E6%A6%82%E7%8E%87%E7%AE%97%E6%B3%95/" rel="tag"># 概率算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/01/22/%E7%BA%BF%E6%AE%B5%E6%A0%91%E4%B8%AD%E5%8D%95%E7%82%B9%E4%BF%AE%E6%94%B9%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8%E4%BC%98%E5%8C%96%E7%9A%84%E7%82%B9/" rel="prev" title="线段树中单点修改可能存在优化的点">
+                  <i class="fa fa-angle-left"></i> 线段树中单点修改可能存在优化的点
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/02/10/matplotlib%E4%BD%BF%E7%94%A8%E4%B8%AD%E6%96%87%E5%AD%97%E4%BD%93/" rel="next" title="matplotlib使用中文字体">
+                  matplotlib使用中文字体 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">skk1faker</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"skk1faker/blog_source","issue_term":"pathname","theme":"github-dark"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

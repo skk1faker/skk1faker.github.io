@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"skk1faker.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","width":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="参考资料：   环境配置 主要是从https:&#x2F;&#x2F;developer.nvidia.com&#x2F;cuda-downloads网站上下载一个.run的安装包，如果之前有安装过显卡驱动的话需要现将显卡驱动卸载, 12sudo apt-get --purge remove nvidia*sudo apt-get autoremove         # 将一些相关的库删除，不然之后在安装cuda驱动的时候会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cuda并行编程">
+<meta property="og:url" content="https://skk1faker.github.io/2023/12/19/cuda%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="skk1faker 笔记">
+<meta property="og:description" content="参考资料：   环境配置 主要是从https:&#x2F;&#x2F;developer.nvidia.com&#x2F;cuda-downloads网站上下载一个.run的安装包，如果之前有安装过显卡驱动的话需要现将显卡驱动卸载, 12sudo apt-get --purge remove nvidia*sudo apt-get autoremove         # 将一些相关的库删除，不然之后在安装cuda驱动的时候会">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-19T12:19:27.000Z">
+<meta property="article:modified_time" content="2025-02-22T04:04:39.512Z">
+<meta property="article:author" content="skk1faker">
+<meta property="article:tag" content="cuda并行编程">
+<meta property="article:tag" content="开发">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://skk1faker.github.io/2023/12/19/cuda%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://skk1faker.github.io/2023/12/19/cuda%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/","path":"2023/12/19/cuda并行编程/","title":"cuda并行编程"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>cuda并行编程 | skk1faker 笔记</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">skk1faker 笔记</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-navigation"><a href="/navigation" rel="section"><i class="fa fa-user fa-fw"></i>导航</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.</span> <span class="nav-text">参考资料：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">环境配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#host%E5%86%85%E5%AD%98%E5%92%8Cdevice%E5%86%85%E5%AD%98%E7%9A%84%E5%88%86%E9%85%8D"><span class="nav-number">1.2.</span> <span class="nav-text">host内存和device内存的分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda%E7%BC%96%E7%A8%8B%E5%92%8Ctorch%E7%BC%96%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">cuda编程和torch编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8torch-c%E4%B8%AD%E9%9C%80%E8%A6%81%E5%8A%A0%E5%85%A5%E7%9A%84%E5%A4%B4%E6%96%87%E4%BB%B6%E5%A6%82%E4%B8%8B"><span class="nav-number">1.4.</span> <span class="nav-text">在torch
+c++中需要加入的头文件如下：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E4%B8%AD%E5%A6%82%E4%BD%95%E8%B0%83%E7%94%A8c%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">python中如何调用c++中的函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#c%E4%B8%AD%E4%BD%BF%E7%94%A8pybind11%E4%BF%AE%E6%94%B9numpy"><span class="nav-number">1.6.</span> <span class="nav-text">c++中使用pybind11修改numpy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#c%E5%92%8Cpython%E8%81%94%E5%8A%A8"><span class="nav-number">1.7.</span> <span class="nav-text">c++和python联动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E9%93%BE%E6%8E%A5%E5%BA%93%E4%B8%AD%E7%9A%84%E7%AC%A6%E5%8F%B7"><span class="nav-number">1.8.</span> <span class="nav-text">如何查看链接库中的符号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cu%E6%96%87%E4%BB%B6%E5%A6%82%E4%BD%95%E8%B0%83%E8%AF%95"><span class="nav-number">1.9.</span> <span class="nav-text">.cu文件如何调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda%E7%BC%96%E7%A8%8B%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%87%BA%E7%8E%B0%E5%86%85%E5%AD%98%E9%94%99%E8%AF%AF%E6%97%B6%E5%BA%94%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5"><span class="nav-number">1.10.</span> <span class="nav-text">cuda编程过程中出现内存错误时应如何排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#blockidxgriddimthreadidxblockdim%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.11.</span> <span class="nav-text">blockIdx,gridDim,threadIdx,blockDim的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFwarp"><span class="nav-number">1.12.</span> <span class="nav-text">什么是warp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AEgrid%E4%B8%8Eblock%E7%9A%84%E7%BB%B4%E5%BA%A6"><span class="nav-number">1.13.</span> <span class="nav-text">如何设置grid与block的维度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#numpy.array%E5%92%8Ctorch.tensor%E7%BB%B4%E5%BA%A6%E4%B8%BAabc%E5%AF%B9%E4%BA%8E%E5%9D%90%E6%A0%87%E4%B8%BAxyz%E7%9A%84%E5%85%83%E7%B4%A0%E5%85%B6%E5%9C%A8numpy.array%E5%92%8Ctorch.tensor%E8%BD%AC%E5%8C%96%E4%B8%BA%E4%B8%80%E7%BB%B4%E6%8C%87%E9%92%88%E4%B9%8B%E5%90%8E%E7%9A%84%E5%AF%B9%E5%BA%94%E4%BD%8D%E7%BD%AE%E5%A6%82%E4%B8%8B"><span class="nav-number">1.14.</span> <span class="nav-text">numpy.array和torch.tensor维度为[a,b,c],对于坐标为[x,y,z]的元素，其在numpy.array和torch.tensor转化为一维指针之后的对应位置如下：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#numpy%E4%B8%8Etorch%E6%93%8D%E4%BD%9C%E4%B8%ADpython%E4%B8%8Ec%E7%9A%84api%E5%AF%B9%E5%BA%94"><span class="nav-number">1.15.</span> <span class="nav-text">numpy与torch操作中python与c++的api对应</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="skk1faker"
+      src="/images/acm-icpc.png">
+  <p class="site-author-name" itemprop="name">skk1faker</p>
+  <div class="site-description" itemprop="description">登峰造极</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skk1faker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skk1faker" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:skk1faker@163.com" title="E-Mail → mailto:skk1faker@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com" rel="noopener me" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2023/12/19/cuda%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="cuda并行编程 | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          cuda并行编程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-12-19 20:19:27" itemprop="dateCreated datePublished" datetime="2023-12-19T20:19:27+08:00">2023-12-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-02-22 12:04:39" itemprop="dateModified" datetime="2025-02-22T12:04:39+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="参考资料">参考资料：</h1>
+<p><a target="_blank" rel="noopener" href="https://godweiyang.com/2021/01/25/cuda-reading/"></a> <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34587739"></a></p>
+<h2 id="环境配置">环境配置</h2>
+<p>主要是从https://developer.nvidia.com/cuda-downloads网站上下载一个<code>.run</code>的安装包，如果之前有安装过显卡驱动的话需要现将显卡驱动卸载,
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get --purge remove nvidia*</span><br><span class="line"><span class="built_in">sudo</span> apt-get autoremove         <span class="comment"># 将一些相关的库删除，不然之后在安装cuda驱动的时候会出现显卡驱动还存在的问题。</span></span><br></pre></td></tr></table></figure></p>
+<p>执行完之后就是将驱动安装<code>sudo sh cuda-xxxx-.run</code>，然后<code>accpet</code>之后按照需要安装。</p>
+<p>安装结束之后记得设置环境变量，安装位置在<code>/usr/local/cuda</code>，将环境变量中添加一些，即在/etc/profile中添加如下内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="string">&quot;/usr/local/cuda/lib64:<span class="variable">$LD_LIBRARY_PATH</span>&quot;</span></span><br><span class="line"><span class="built_in">export</span> C_INCLUDE_PATH=<span class="string">&quot;/usr/local/cuda/include:<span class="variable">$C_INCLUDE_PATH</span>&quot;</span></span><br><span class="line"><span class="built_in">export</span> CPLUS_INCLUDE_PATH=<span class="string">&quot;/usr/local/cuda/include:<span class="variable">$CPLUS_INCLUDE_PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="host内存和device内存的分配">host内存和device内存的分配</h2>
+<p>host指的是cpu，device指的是gpu，两个单位分配的内存不在一个位置，所以就有一个分配的问题，cuda提供了一个管理内存的api<br />
+1.
+<code>cudaError_t cudaMallocManaged(void **devPtr, size_t size, unsigned int flag=0);</code>用于分配内存<br />
+2.
+<code>cudaDeviceSynchronize()</code>函数保证device和host同步，这样后面才可以正确访问kernel计算的结果<br />
+3. <code>cudaFree()</code>用于释放内存。 4.
+<code>cudaMemcpy(result_ptr, te.data_ptr(), sizeof(float) * te.numel(),cudaMemcpyDeviceToHost);</code>
+注意cudaMemcpyDeviceToHost表示device上的内存到cpu上，te.data_ptr()是在gpu上的地址，result_ptr表示在cpu上的内存地址。同样cudaMemcpyHostToDevice表示将cpu上的内存数据复制到gpu上</p>
+<p>==，可以自动将host上的数据传输到device上。==</p>
+<h2 id="cuda编程和torch编程">cuda编程和torch编程</h2>
+<ol type="1">
+<li><p>在cuda中想修改torch可以先将torch的地址搞到，将其视为一维数组，然后对这个地址进行操作，主要难点在与使用什么api
+<code>tensor.data_ptr&lt;float&gt;()</code></p></li>
+<li><p>cuda多线程编程中锁的问题
+https://blog.csdn.net/Limiao_123/article/details/111197531</p></li>
+</ol>
+<h2 id="在torch-c中需要加入的头文件如下">在torch
+c++中需要加入的头文件如下：</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;torch/torch.h&gt;</span><br><span class="line">#include&lt;torch/extension.h&gt;     // 这个不加不行，在使用pybind11生成链接库时，如果一些函数中参数为tensor，那么在调用时会出现TypeError: torch2numpy(): incompatible function arguments. The following argument types are supporte，这个错误</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<h2 id="python中如何调用c中的函数">python中如何调用c++中的函数</h2>
+<p>https://zhuanlan.zhihu.com/p/362834539</p>
+<p>在c++模块中的最后一部分一定要加上如下部分，这是是的python和c++之间产生联系的一部分代码
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">PYBIND11_MODULE(example, m) &#123;</span><br><span class="line">    m.doc() = &quot;pybind11 example plugin&quot;; // optional module docstring</span><br><span class="line"></span><br><span class="line">    m.def(&quot;add&quot;, &amp;add, &quot;A function which adds two numbers&quot;);</span><br><span class="line">  </span><br><span class="line">    m.def(&quot;inadd&quot;,&amp;inadd,&quot;cin and count&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">最重要的就是这个python模块绑定</span><br><span class="line"></span><br><span class="line">example：模型名，切记不需要引号</span><br><span class="line"></span><br><span class="line">m：可以理解成模块对象把</span><br><span class="line"></span><br><span class="line">m.doc()：help说明</span><br><span class="line"></span><br><span class="line">m.def：用来注册函数和python打通界限</span><br></pre></td></tr></table></figure></p>
+<h2 id="c中使用pybind11修改numpy">c++中使用pybind11修改numpy</h2>
+<p>https://blog.csdn.net/howard789/article/details/125128283
+https://cloud.tencent.com/developer/ask/sof/1032057</p>
+<p>主要还是将numpy转换为<code>float *</code>或者<code>double *</code>，难点在于api是什么
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pybind11::array_t&lt;double&gt; narray;</span><br><span class="line">auto buf = narray.request();</span><br><span class="line">float *data = (float *)buf.ptr; // static_cast&lt;float *&gt;buf.ptr</span><br></pre></td></tr></table></figure> 上述过程用于获取numpy中存储数据的地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int N = array.shape()[0], M = array.shape()[1];</span><br></pre></td></tr></table></figure>
+<p>上述过程用于获取numpy中数据的维度信息。</p>
+<p>numpy在c++中的一些函数： 1. pybind11::array_t<float>.size() //
+元素数量有多少 2. pybind11::array_t<float>.shape() // 每个维度大小是什么
+3. pybind11::array_t<float>.ndim() // 有几个维度</p>
+<h2 id="c和python联动">c++和python联动</h2>
+<p>https://blog.csdn.net/weixin_44966641/article/details/125377080#t23</p>
+<p>主要使用一个pybind11，通过生成库进行处理。编译命令如下 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ -O3 -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` test.cpp -o example`python3-config --extension-suffix`</span><br></pre></td></tr></table></figure>
+其中<code>python3 -m pybind11 --includes</code>表示的是使用pybind11时需要include的对象，python3-config
+--extension-suffix表示最终的动态链接库的后缀是什么。 下面是例子
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pybind11/pybind11.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pybind11/stl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pybind11/numpy.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> py = pybind11;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">add_func</span><span class="params">(<span class="type">int</span> i, <span class="type">int</span> j)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> i + j;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_list</span><span class="params">(py::list my_list)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">for</span> (<span class="keyword">auto</span> item : my_list)</span><br><span class="line">       py::<span class="built_in">print</span>(item);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">std::vector&lt;<span class="type">int</span>&gt; <span class="title">print_list2</span><span class="params">(std::vector&lt;<span class="type">int</span>&gt; &amp; my_list)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> x = std::<span class="built_in">vector</span>&lt;<span class="type">int</span>&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> item : my_list)&#123;</span><br><span class="line">        x.<span class="built_in">push_back</span>(item + <span class="number">233</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">py::<span class="type">array_t</span>&lt;<span class="type">double</span>&gt; <span class="title">add_arrays</span><span class="params">(py::<span class="type">array_t</span>&lt;<span class="type">double</span>&gt; input1, py::<span class="type">array_t</span>&lt;<span class="type">double</span>&gt; input2)</span> </span>&#123;</span><br><span class="line">    py::buffer_info buf1 = input<span class="number">1.</span><span class="built_in">request</span>(), buf2 = input<span class="number">2.</span><span class="built_in">request</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (buf<span class="number">1.</span>ndim != <span class="number">1</span> || buf<span class="number">2.</span>ndim != <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;Number of dimensions must be one&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (buf<span class="number">1.</span>size != buf<span class="number">2.</span>size)</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;Input shapes must match&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* No pointer is passed, so NumPy will allocate the buffer */</span></span><br><span class="line">    <span class="keyword">auto</span> result = py::<span class="built_in">array_t</span>&lt;<span class="type">double</span>&gt;(buf<span class="number">1.</span>size);</span><br><span class="line"></span><br><span class="line">    py::buffer_info buf3 = result.<span class="built_in">request</span>();</span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> *ptr1 = (<span class="type">double</span> *) buf<span class="number">1.</span>ptr,</span><br><span class="line">           *ptr2 = (<span class="type">double</span> *) buf<span class="number">2.</span>ptr,</span><br><span class="line">           *ptr3 = (<span class="type">double</span> *) buf<span class="number">3.</span>ptr;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> idx = <span class="number">0</span>; idx &lt; buf<span class="number">1.</span>shape[<span class="number">0</span>]; idx++)</span><br><span class="line">        ptr3[idx] = ptr1[idx] + ptr2[idx];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">PYBIND11_MODULE</span>(example, m) &#123;</span><br><span class="line">	m.<span class="built_in">doc</span>() = <span class="string">&quot;pybind11 example plugin&quot;</span>;  <span class="comment">//可选，说明这个模块是做什么的</span></span><br><span class="line">    m.<span class="built_in">def</span>(<span class="string">&quot;add_func&quot;</span>, &amp;add_func, <span class="string">&quot;A function which adds two numbers&quot;</span>);</span><br><span class="line">    m.<span class="built_in">attr</span>(<span class="string">&quot;the_answer&quot;</span>) = <span class="number">23333</span>;</span><br><span class="line">    py::object world = py::<span class="built_in">cast</span>(<span class="string">&quot;World&quot;</span>);</span><br><span class="line">    m.<span class="built_in">attr</span>(<span class="string">&quot;what&quot;</span>) = world;</span><br><span class="line">    m.<span class="built_in">def</span>(<span class="string">&quot;print_list&quot;</span>, &amp;print_list, <span class="string">&quot;function to print list&quot;</span>, py::<span class="built_in">arg</span>(<span class="string">&quot;my_list&quot;</span>));</span><br><span class="line">    m.<span class="built_in">def</span>(<span class="string">&quot;print_list2&quot;</span>, &amp;print_list2, <span class="string">&quot;help message&quot;</span>, py::<span class="built_in">arg</span>(<span class="string">&quot;my_list2&quot;</span>));</span><br><span class="line">    m.<span class="built_in">def</span>(<span class="string">&quot;add_arrays&quot;</span>, &amp;add_arrays, <span class="string">&quot;Add two NumPy arrays&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这里的PYBIND11_MODULE中example表示之后包的名称，编译之后的库名字也应该是这个。m.def用于表示模块中的函数有哪些。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#指定编译器</span></span><br><span class="line"><span class="comment"># CC = nvcc</span></span><br><span class="line">CC = g++</span><br><span class="line"><span class="comment">#指定编译参数</span></span><br><span class="line"><span class="comment"># CFLAGS = -shared -Xcompiler -fPIC -std=c++17 -g -D_GLIBCXX_USE_CXX11_ABI=0 </span></span><br><span class="line">CFLAGS = -shared -fPIC -std=c++17 -g -D_GLIBCXX_USE_CXX11_ABI=0 </span><br><span class="line"> </span><br><span class="line"><span class="comment">#指定头文件路径，此处用于指定非标准库的头文件路径</span></span><br><span class="line">INC = -I./ -I /home/skt1faker/anaconda3/envs/homework/include/python3.9 -I/home/skt1faker/anaconda3/envs/homework/lib/python3.9/site-packages/pybind11/include</span><br><span class="line"><span class="comment">#指定要链接的动态库或静态库 -L是指定动态库路径，非标准的动态库需要此参数</span></span><br><span class="line">LIBS =  -L/home/skt1faker/anaconda3/envs/homework/lib -lpython3.9  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#把上面放一起</span></span><br><span class="line">CXXFLAGS = <span class="variable">$&#123;CFLAGS&#125;</span> <span class="variable">$&#123;INC&#125;</span> <span class="variable">$&#123;LIBS&#125;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#指定生成可执行文件名称</span></span><br><span class="line">EXEC = example.cpython-39-x86_64-linux-gnu.so	<span class="comment"># 这个后缀是python3-config_--extension-suffix得到的</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#指定由哪些文件来生成可执行文件</span></span><br><span class="line"><span class="comment"># COBJS = mpi.cpp mpi_cuda.cu</span></span><br><span class="line">COBJS = test.cpp </span><br><span class="line"> </span><br><span class="line"><span class="comment">#make执行动作</span></span><br><span class="line">all:</span><br><span class="line">	<span class="variable">$&#123;CC&#125;</span> -o <span class="variable">$&#123;EXEC&#125;</span> <span class="variable">$&#123;COBJS&#125;</span> <span class="variable">$&#123;CXXFLAGS&#125;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#make clean动作</span></span><br><span class="line">clean:</span><br><span class="line">	<span class="built_in">rm</span> -rf <span class="variable">$&#123;OBJS&#125;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># nvcc -O3 -shared -std=c++11 -Xcompiler -fPIC `python3 -m pybind11 --includes` test.cpp -o example`python3-config --extension-suffix`</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> example <span class="keyword">as</span> e</span><br><span class="line"><span class="comment"># result = example.add(3, 4)</span></span><br><span class="line"><span class="comment"># print(result)</span></span><br><span class="line">a = np.ones(<span class="number">3</span>)</span><br><span class="line">b = np.ones(<span class="number">3</span>)</span><br><span class="line">c = e.add_arrays(a,b)</span><br><span class="line"><span class="comment"># e.add_func(1,2)</span></span><br><span class="line">list_a = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">e.print_list(list_a);</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="如何查看链接库中的符号">如何查看链接库中的符号</h2>
+<p>可以使用<code>nm -C 动态链接库 |grep 要查找的函数名</code>来进行查看。
+## 生成的动态链接库怎么调试</p>
+<p>https://www.cnblogs.com/lidabo/p/17076870.html
+使用gdb可以调试，<code>gdb --args python file.py</code></p>
+<p>之后在动态链接库的源文件上打断点。</p>
+<p>后面的调试就和以前一样了</p>
+<h2 id="cu文件如何调试">.cu文件如何调试</h2>
+<p>https://zhuanlan.zhihu.com/p/386527323</p>
+<p>使用cuda-gdb，可以调试.cu文件，但是在编译的时候需要加上-G选项，否则编译结束之后无法出现调试信息。</p>
+<p><code>nvcc -g -G source.cpp cuda.cu -o haha</code></p>
+<p>调试的时候使用命令</p>
+<p><code>cuda-deb --args python test.py</code></p>
+<p>下面是一些调试命令： 1. 查看cuda线程 <code>info cuda threads</code>
+2. 保存断点 <code>save breakpoints b.cfg</code> 3. 切换cuda线程
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(cuda-gdb) cuda device 0 sm 1 warp 2 lane 3</span><br><span class="line">[Switching focus to CUDA kernel 1, grid 2, block (8,0,0), thread</span><br><span class="line">(67,0,0), device 0, sm 1, warp 2, lane 3]</span><br><span class="line">374 int totalThreads = gridDim.x * blockDim.x;</span><br><span class="line"></span><br><span class="line">(cuda-gdb) cuda thread (15)</span><br><span class="line">[Switching focus to CUDA kernel 1, grid 2, block (8,0,0), thread</span><br><span class="line">(15,0,0), device 0, sm 1, warp 0, lane 15]</span><br><span class="line">374 int totalThreads = gridDim.x * blockDim.x;</span><br><span class="line"></span><br><span class="line">(cuda-gdb) cuda block 1 thread 3</span><br><span class="line">[Switching focus to CUDA kernel 1, grid 2, block (1,0,0), thread (3,0,0), </span><br><span class="line">device 0, sm 3, warp 0, lane 3]</span><br><span class="line">374 int totalThreads = gridDim.x * blockDim.</span><br></pre></td></tr></table></figure></p>
+<h2
+id="cuda编程过程中出现内存错误时应如何排查">cuda编程过程中出现内存错误时应如何排查</h2>
+<p><code>compute-sanitizer python test.py</code>
+这个代码输入之后，会出现很多很多输出，这个时候就要在输出中搜索相关cuda文件的名字，来定位问题出现的位置。</p>
+<h2
+id="blockidxgriddimthreadidxblockdim的关系">blockIdx,gridDim,threadIdx,blockDim的关系</h2>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43715171/article/details/121794135">参考</a></p>
+<p>gridDim描述了线程格的维度情况，blockIdx描述了线程块在线程格中坐标，blockDim描述了线程块的维度情况，threadIdx描述了线程在线程块中的坐标。</p>
+<p>blockDim和gridDim</p>
+<p>可以把线程格和线程块都看作一个三维的矩阵。这里假设线程格是一个3<em>4</em>5的三维矩阵，
+线程块是一个4<em>5</em>6的三维矩阵。</p>
+<ol type="1">
+<li>gridDim</li>
+</ol>
+<p>gridDim.x、gridDim.y、gridDim.z分别表示线程格各个维度的大小，所以有</p>
+<p>gridDim.x=3 gridDim.y=4 gridDim.z=5</p>
+<ol start="2" type="1">
+<li>blockDim
+blockDim.x、blockDim.y、blockDim.z分别表示线程块中各个维度的大小，所以有</li>
+</ol>
+<p>blockDim.x=4 blockDim.y=5 blockDim.z=6</p>
+<ol start="3" type="1">
+<li>blockIdx</li>
+</ol>
+<p>blockIdx.x、blockIdx.y、blockIdx.z分别表示当前线程块所处的线程格的坐标位置</p>
+<ol start="4" type="1">
+<li>threadIdx</li>
+</ol>
+<p>threadIdx.x、threadIdx.y、threadIdx.z分别表示当前线程所处的线程块的坐标位置</p>
+<p>通过
+blockIdx.x、blockIdx.y、blockIdx.z、threadIdx.x、threadIdx.y、threadIdx.z就可以完全定位一个线程的坐标位置了。</p>
+<p>线程格里面总的线程个数N即可通过下面的公式算出</p>
+<p><code>N = gridDim.x*gridDim.y*gridDim.z*blockDim.x*blockDim.y*blockDim.z</code></p>
+<p>三、举例</p>
+<p>将所有的线程排成一个序列，序列号为0,1,2,…,N，如何找到当前的序列号？</p>
+<p>先找到当前线程位于线程格中的哪一个线程块blockId</p>
+<p><code>blockId = blockIdx.x + blockIdx.y*gridDim.x + blockIdx.z*gridDim.x*gridDim.y;</code></p>
+<p>找到当前线程位于线程块中的哪一个线程threadId</p>
+<p><code>threadId = threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.x*blockDim.y;</code></p>
+<p>计算一个线程块中一共有多少个线程M</p>
+<p><code>M = blockDim.x*blockDim.y*blockDim.z</code></p>
+<p>求得当前的线程序列号idx</p>
+<p><code>idx = threadId + M*blockId;</code></p>
+<h2 id="什么是warp">什么是warp</h2>
+<p>https://zhuanlan.zhihu.com/p/123170285</p>
+<p>每一个warp含有32个线程，一个warp中的所有线程在一个block中，当一个block中的线程数量不是warp中的正数倍时，gpu会给与多余的线程分配，但是多出的线程都是inactive状态，所以block中的线程数量最好为32的倍数。</p>
+<p>warp中的线程拥有<strong>同步执行规则</strong>，即同步执行一个函数，如果一个warp中的线程由锁来实现资源互斥访问的话，那必然会导致死锁的问题，因为一个线程获取了锁，其他线程没有获取，获取锁的线程会向下执行，但是warp中的线程要同步执行，所以即便是warp中一个线程获取了锁之后，其他线程没有获取锁也无法继续执行。</p>
+<p>例如 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Lock</span> &#123;</span><br><span class="line">   </span><br><span class="line">    <span class="type">int</span> *mutex;</span><br><span class="line">    <span class="built_in">Lock</span>(<span class="type">void</span>) &#123;</span><br><span class="line">   </span><br><span class="line">        <span class="type">int</span> state = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">cudaMalloc</span>((<span class="type">void</span> **) &amp;mutex, <span class="built_in">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">        <span class="built_in">cudaMemcpy</span>(mutex, &amp;state, <span class="built_in">sizeof</span>(<span class="type">int</span>), cudaMemcpyHostToDevice);</span><br><span class="line">    &#125;</span><br><span class="line">    ~<span class="built_in">Lock</span>(<span class="type">void</span>) &#123;</span><br><span class="line">   </span><br><span class="line">        <span class="built_in">cudaFree</span>(mutex);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">__device__ <span class="type">void</span> <span class="title">lock</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">   </span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">atomicCAS</span>(mutex, <span class="number">0</span>, <span class="number">1</span>) != <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">__device__ <span class="type">void</span> <span class="title">unlock</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">   </span><br><span class="line">        <span class="built_in">atomicExch</span>(mutex, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">.......</span><br><span class="line"></span><br><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">theKernel</span><span class="params">(Lock myLock)</span> </span>&#123;</span><br><span class="line">   </span><br><span class="line">	myLock.<span class="built_in">lock</span>();</span><br><span class="line">	<span class="built_in">Do_your_job</span>();</span><br><span class="line">	myLock.<span class="built_in">unlock</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+在调用theKernel时，theKernel&lt;&lt;&lt;1,128&gt;&gt;&gt;(lock)会发生死锁，但是theKernel&lt;&lt;&lt;128,1&gt;&gt;&gt;(lock)就不会发生死锁
+https://blog.csdn.net/Limiao_123/article/details/111197531</p>
+<p>解决这种死锁的方法就是用条件语句，warp各个线程虽然是同步的，但是不同线程中根据不同的条件语句执行的也有所不同，一种比较脑瘫的方法是这样的：
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">__global__ void haha(int *lock,int n)&#123;</span><br><span class="line">    int id = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">    if(id &gt; n)return ;</span><br><span class="line">    switch(id)&#123;</span><br><span class="line">        case 0:&#123;</span><br><span class="line">            while(atomicExch(lock,0) == 0);</span><br><span class="line">            // 进行获取锁之后的操作</span><br><span class="line">            *lock = 1;</span><br><span class="line">        &#125;break;</span><br><span class="line">        case 1:&#123;</span><br><span class="line">            while(atomicExch(lock,0) == 0);</span><br><span class="line">            // 进行获取锁之后的操作</span><br><span class="line">            *lock = 1;</span><br><span class="line">        &#125;break;</span><br><span class="line">        case 2:&#123;</span><br><span class="line">            while(atomicExch(lock,0) == 0);</span><br><span class="line">            // 进行获取锁之后的操作</span><br><span class="line">            *lock = 1;</span><br><span class="line">        &#125;break;</span><br><span class="line">        case 3:&#123;</span><br><span class="line">            while(atomicExch(lock,0) == 0);</span><br><span class="line">            // 进行获取锁之后的操作</span><br><span class="line">            *lock = 1;</span><br><span class="line">        &#125;break;</span><br><span class="line">          .</span><br><span class="line">          .</span><br><span class="line">          .</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>也就是引入分支结构就可以解决这个问题，将这个分支结构进行浅浅的改动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">__global__ void haha(int *lock,int n)&#123;</span><br><span class="line">    int id = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">    if(id &gt; n)return ;</span><br><span class="line">    while(ture)&#123;</span><br><span class="line">        if(atomicExch(lock,0) != 0)&#123;</span><br><span class="line">            // 进行获取锁之后的操作</span><br><span class="line">            *lock = 1;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到本文使用了自旋锁，lock = 1 表示锁被释放，lock =
+0表示锁被占用。<code>atomicExch(unsigned int *address,unsigned int val)</code>表示将address处的值设置为val，并返回address处原先的值，两个操作为一个原子操作。锁的原理是先检查锁是否被占用，未被占用时获取锁。本文实现的自旋锁刚好反过来，先上锁，然后在查看原先锁的状态，如果原先锁是被释放的，那么就上锁成功。所以自旋锁的写法为
+while(atomicExch(lock,0) == 0);</p>
+<p>cuda中还有其他原子操作，这里给出地址。
+https://blog.csdn.net/Bruce_0712/article/details/63251532</p>
+<h2 id="如何设置grid与block的维度">如何设置grid与block的维度</h2>
+<p>https://blog.csdn.net/yangdashi888/article/details/78183464
+https://blog.csdn.net/quicmous/article/details/115250605</p>
+<p>GPU 由多个 SM 处理器构成，一个 SM 处理器包含 8 个 SP 核。一个 SM
+处理器可同时处理 32 个线程，实际上就是同一套指令在每个 SP 核上重复 4
+次， 这样提交一次任务，8 个SP 核同时就能处理 32 个线程。
+用于查看显卡中sm的数量 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cudaDeviceProp prop;</span><br><span class="line"><span class="built_in">cudaGetDeviceProperties</span>(&amp;prop, <span class="number">0</span>); <span class="comment">//0可以被替换成你的其他卡的实际编号</span></span><br><span class="line"><span class="type">int</span> result = prop.multiProcessorCount;  <span class="comment">// sm的数量</span></span><br></pre></td></tr></table></figure></p>
+<p>sp的数量在官网上能查到</p>
+<p>在设置的过程中grid中block的数量应为sm的正数倍数，这样才能使得任务均匀的分配在用于计算的sm上，block中的线程数量应为sp
+* 4的整数倍。</p>
+<h2
+id="numpy.array和torch.tensor维度为abc对于坐标为xyz的元素其在numpy.array和torch.tensor转化为一维指针之后的对应位置如下">numpy.array和torch.tensor维度为[a,b,c],对于坐标为[x,y,z]的元素，其在numpy.array和torch.tensor转化为一维指针之后的对应位置如下：</h2>
+<p>int posi = z + y * c + x * b * c;</p>
+<h2
+id="numpy与torch操作中python与c的api对应">numpy与torch操作中python与c++的api对应</h2>
+<ol type="1">
+<li><p>与torch相对应的操作
+https://blog.csdn.net/weixin_45209433/article/details/103495558</p></li>
+<li><p>torch.tensor中的切片操作
+https://blog.csdn.net/Flag_ing/article/details/109628297</p></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="skk1faker 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="skk1faker 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/cuda%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" rel="tag"># cuda并行编程</a>
+              <a href="/tags/%E5%BC%80%E5%8F%91/" rel="tag"># 开发</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/11/%E7%82%B9%E5%88%86%E6%A0%91%E7%82%B9%E5%88%86%E6%B2%BB/" rel="prev" title="点分树点分治">
+                  <i class="fa fa-angle-left"></i> 点分树点分治
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/12/25/lower-bound%E5%92%8Cupper-bound%E6%9F%A5%E6%89%BE%E5%A4%A7%E4%BA%8E%E7%AD%89%E4%BA%8E%E3%80%81%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8E%E3%80%81%E5%A4%A7%E4%BA%8E%E3%80%81%E5%B0%8F%E4%BA%8E%E7%9A%84%E6%96%B9%E6%B3%95/" rel="next" title="lower_bound和upper_bound查找大于等于、小于等于、大于、小于的方法">
+                  lower_bound和upper_bound查找大于等于、小于等于、大于、小于的方法 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">skk1faker</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"skk1faker/blog_source","issue_term":"pathname","theme":"github-dark"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

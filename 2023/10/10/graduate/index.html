@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"skk1faker.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","width":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abandon_the_Bayer.... 暗光处理主要思路  使用两类网络，一类用语将rggb图像变为单一颜色灰度图像，主要是为了统一输入，因为有些输入图像格式为ryyb，这种格式得到的图片质量较高 为了不让原始的彩色信息丢失，这里使用一个channel-wise的层，他可以接收单一颜色的灰度图片，也接受rggb颜色的图片，然后进行处理得到最终的结果   数据集 sid数据集介绍(https:&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="graduate">
+<meta property="og:url" content="https://skk1faker.github.io/2023/10/10/graduate/index.html">
+<meta property="og:site_name" content="skk1faker 笔记">
+<meta property="og:description" content="Abandon_the_Bayer.... 暗光处理主要思路  使用两类网络，一类用语将rggb图像变为单一颜色灰度图像，主要是为了统一输入，因为有些输入图像格式为ryyb，这种格式得到的图片质量较高 为了不让原始的彩色信息丢失，这里使用一个channel-wise的层，他可以接收单一颜色的灰度图片，也接受rggb颜色的图片，然后进行处理得到最终的结果   数据集 sid数据集介绍(https:&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skk1faker.github.io/2023/10/10/graduate/pipeline.png">
+<meta property="og:image" content="https://skk1faker.github.io/2023/10/10/graduate/%E8%BE%93%E5%85%A5%E6%9C%AA%E9%87%8F%E5%8C%96.png">
+<meta property="article:published_time" content="2023-10-10T05:19:28.000Z">
+<meta property="article:modified_time" content="2025-02-22T04:04:39.516Z">
+<meta property="article:author" content="skk1faker">
+<meta property="article:tag" content="毕业">
+<meta property="article:tag" content="量化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skk1faker.github.io/2023/10/10/graduate/pipeline.png">
+
+
+<link rel="canonical" href="https://skk1faker.github.io/2023/10/10/graduate/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://skk1faker.github.io/2023/10/10/graduate/","path":"2023/10/10/graduate/","title":"graduate"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>graduate | skk1faker 笔记</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">skk1faker 笔记</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-navigation"><a href="/navigation" rel="section"><i class="fa fa-user fa-fw"></i>导航</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#abandon_the_bayer...."><span class="nav-number">1.</span> <span class="nav-text">Abandon_the_Bayer....</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9A%97%E5%85%89%E5%A4%84%E7%90%86%E4%B8%BB%E8%A6%81%E6%80%9D%E8%B7%AF"><span class="nav-number">1.1.</span> <span class="nav-text">暗光处理主要思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">2.</span> <span class="nav-text">数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8F%E5%8C%96%E6%A1%86%E6%9E%B6%E4%B9%A6%E5%86%99"><span class="nav-number">3.</span> <span class="nav-text">量化框架书写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F"><span class="nav-number">4.</span> <span class="nav-text">知识蒸馏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E5%B1%82%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">4.1.</span> <span class="nav-text">中间层的选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8hession%E7%9F%A9%E9%98%B5%E7%9A%84%E8%BF%B9%E5%8E%BB%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E5%B1%82%E6%98%AF%E5%90%A6%E9%9C%80%E8%A6%81%E8%BF%9B%E8%A1%8C%E8%92%B8%E9%A6%8F"><span class="nav-number">4.2.</span> <span class="nav-text">使用hession矩阵的迹去判断一个层是否需要进行蒸馏</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">存在问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%9C%A8%E5%81%9A%E7%9A%84%E5%AE%9E%E9%AA%8C%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E4%BB%BB%E5%8A%A1"><span class="nav-number">6.</span> <span class="nav-text">正在做的实验以及相关任务：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sun-oct-15-171616-hkt-2023"><span class="nav-number">6.1.</span> <span class="nav-text">Sun Oct 15 17:16:16 HKT 2023</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mon-oct-16-173948-hkt-2023"><span class="nav-number">6.2.</span> <span class="nav-text">Mon Oct 16 17:39:48 HKT 2023</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wed-oct-24-104548-hkt-2023"><span class="nav-number">6.3.</span> <span class="nav-text">Wed Oct 24 10:45:48 HKT 2023</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="skk1faker"
+      src="/images/acm-icpc.png">
+  <p class="site-author-name" itemprop="name">skk1faker</p>
+  <div class="site-description" itemprop="description">登峰造极</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skk1faker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skk1faker" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:skk1faker@163.com" title="E-Mail → mailto:skk1faker@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com" rel="noopener me" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2023/10/10/graduate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="graduate | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          graduate
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-10-10 13:19:28" itemprop="dateCreated datePublished" datetime="2023-10-10T13:19:28+08:00">2023-10-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-02-22 12:04:39" itemprop="dateModified" datetime="2025-02-22T12:04:39+08:00">2025-02-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%AF%95%E4%B8%9A/" itemprop="url" rel="index"><span itemprop="name">毕业</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="abandon_the_bayer....">Abandon_the_Bayer....</h2>
+<h3 id="暗光处理主要思路">暗光处理主要思路</h3>
+<ol type="1">
+<li><p>使用两类网络，一类用语将rggb图像变为单一颜色灰度图像，主要是为了统一输入，因为有些输入图像格式为ryyb，这种格式得到的图片质量较高</p></li>
+<li><p>为了不让原始的彩色信息丢失，这里使用一个channel-wise的层，他可以接收单一颜色的灰度图片，也接受rggb颜色的图片，然后进行处理得到最终的结果
+<img src="pipeline.png" /></p></li>
+</ol>
+<h2 id="数据集">数据集</h2>
+<p>sid数据集介绍(https://blog.csdn.net/tywwwww/article/details/131072339)</p>
+<h2 id="量化框架书写">量化框架书写</h2>
+<ul>
+<li>torch.fx使用介绍
+<ul>
+<li>计算图相关</li>
+</ul></li>
+<li>torch.nn.qat的作用
+<ul>
+<li>量化相关</li>
+</ul></li>
+<li>mqbench相关<a
+target="_blank" rel="noopener" href="https://mqbench.readthedocs.io/en/latest/user_guide/internal/learn_config.html">文档</a>
+<ul>
+<li>量化框架中层替换分别使用了pytorch中nn.qat库中的一些卷积层，以及mqbench.nn.qat、mqbench.nn.intrinsic.qat
+==&gt; 主要为融合relu，batchnormal等层结构</li>
+</ul></li>
+<li>相关量化方法，mqbench中已经实现的部分 <a
+target="_blank" rel="noopener" href="https://mqbench.readthedocs.io/en/latest/get_started/support_matrix.html">内部含有相关论文</a></li>
+</ul>
+<h2 id="知识蒸馏">知识蒸馏</h2>
+<ul>
+<li>同样适用torch.fx框架书写蒸馏部分</li>
+<li>完成teacher蒸馏框架 <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/353472061">特征蒸馏方案</a></li>
+</ul>
+<h3 id="中间层的选择">中间层的选择</h3>
+<p>选择中间层进行知识蒸馏需要考虑几个因素，包括模型的架构、任务的复杂性和计算资源。以下是一些选择中间层的指导原则：</p>
+<ol type="1">
+<li><p>特征的重要性：首先，需要分析模型中不同层的特征表示对于任务的重要性。通常来说，越接近模型输出的层包含的特征更加抽象和高级，而越靠近输入的层包含的特征更加原始和低级。根据任务的需要，选择与任务相关性较高的中间层进行蒸馏。</p></li>
+<li><p>模型大小和计算资源：蒸馏中间层会增加计算开销，因为要传递更多的特征表示。如果计算资源有限，你可能需要选择较少的中间层进行蒸馏，或者考虑对中间层进行进一步的降维或压缩。</p></li>
+<li><p>蒸馏目标：确定蒸馏的目标也很重要。如果你的目标是在小型模型中保留大型模型的全部知识，那么选择更多的中间层进行蒸馏可能是有益的。如果只关注某些方面的知识，可以选择与目标知识相关的中间层。</p></li>
+<li><p>实验和调整：最好的方法是进行一些实验和调整，以确定最佳的中间层选择。可以尝试不同的组合，并使用验证集来评估性能，然后选择性能最好的模型。</p></li>
+</ol>
+<p>总之，选择中间层需要综合考虑任务需求、计算资源和性能指标。根据你的具体情况和目标，可以灵活地调整中间层的选择来进行知识蒸馏。</p>
+<h3
+id="使用hession矩阵的迹去判断一个层是否需要进行蒸馏">使用hession矩阵的迹去判断一个层是否需要进行蒸馏</h3>
+<ol type="1">
+<li>hession能判断出一个activation的改变是否能对整个网络影响很大，对于影响很大的层我们认为这是关键输出，也就是特征比较强的层.</li>
+</ol>
+<h2 id="存在问题">存在问题</h2>
+<ul>
+<li>downshuffle中的输入没有办法量化 <img src="输入未量化.png"
+alt="输入未量化" /></li>
+</ul>
+<h2 id="正在做的实验以及相关任务">正在做的实验以及相关任务：</h2>
+<ul class="task-list">
+<li><p><label><input type="checkbox"
+checked="" />增加了量化方法修改的功能（不是量化开发板的修改）</label></p></li>
+<li><p><label><input type="checkbox"
+checked="" />修改结果保存部分的代码</label></p>
+<ul class="task-list">
+<li><label><input type="checkbox"
+checked="" />能够完成最优结果的保存</label></li>
+<li><label><input type="checkbox"
+checked="" />最优结果对应的检测结果</label></li>
+<li><label><input type="checkbox" checked="" />当前模型结果</label></li>
+<li><label><input type="checkbox"
+checked="" />当前模型保存（模型名含模型对应的袋鼠）</label></li>
+<li><label><input type="checkbox"
+checked="" />每代检测结果txt文件</label></li>
+<li><label><input type="checkbox"
+checked="" />完善量化方案配置（dsq，或者还是其他方案）</label></li>
+</ul></li>
+<li><p><label><input type="checkbox"
+checked="" />启动对照实验</label></p>
+<ul class="task-list">
+<li><label><input type="checkbox"
+checked="" />启动多个其他方案的量化</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />dsq方法</label></li>
+</ul></li>
+<li><label><input type="checkbox"
+checked="" />启动一个本方案的量化</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />多种蒸馏权重</label></li>
+<li><label><input type="checkbox" />不同位置的蒸馏层</label>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />底部</label></li>
+<li><label><input type="checkbox" />中部</label></li>
+<li><label><input type="checkbox" />开头</label></li>
+</ul></li>
+<li><label><input type="checkbox" />不同位置的量化效果(不加蒸馏)</label>
+<ul class="task-list">
+<li><label><input type="checkbox" />开头结尾</label></li>
+<li><label><input type="checkbox" />中间位置</label></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><label><input type="checkbox"
+checked="" />未加量化和蒸馏的代码泡一下 ## 论文章节</label></p></li>
+<li><p><label><input
+type="checkbox" />量化蒸馏与暗光增强的介绍</label></p>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />量化</label>
+<ul class="task-list">
+<li><label><input type="checkbox"
+checked="" />多种量化方式的数学原理</label></li>
+<li><label><input type="checkbox"
+checked="" />量化训练的几种方案，以及量化的难点</label></li>
+<li><label><input type="checkbox" checked="" />量化如何进行训练</label>
+<ul class="task-list">
+<li><label><input type="checkbox"
+checked="" />为什么需要统计参数</label></li>
+<li><label><input type="checkbox"
+checked="" />训练怎么才能达到最好的效果（展示未使用pytorch.fx量化框架加载模型的结果）</label></li>
+</ul></li>
+</ul></li>
+<li><label><input type="checkbox" />暗光增强</label>
+<ul class="task-list">
+<li><label><input type="checkbox" />暗光网络</label></li>
+<li><label><input type="checkbox" />暗光的难点</label></li>
+</ul></li>
+<li><label><input type="checkbox" />蒸馏</label>
+<ul class="task-list">
+<li><label><input type="checkbox" />蒸馏的介绍</label></li>
+<li><label><input type="checkbox" />为什么引入蒸馏</label></li>
+</ul></li>
+</ul></li>
+<li><p><label><input type="checkbox" />量化蒸馏框架的介绍</label></p>
+<ul class="task-list">
+<li><label><input type="checkbox" />量化框架的主要技术</label></li>
+<li><label><input type="checkbox" />层融合原因</label>
+<ul class="task-list">
+<li><label><input
+type="checkbox" />batchnormal、relu为什么需要需要融合</label></li>
+<li><label><input
+type="checkbox" />融合应该是一个什么样的计算方式</label></li>
+</ul></li>
+<li><label><input type="checkbox" />如何引入蒸馏</label></li>
+<li><label><input type="checkbox" />量化方法的选择</label></li>
+<li><label><input
+type="checkbox" />框架的方便性与广泛适用性演示（可以进通过几行代码来完成量化训练的步数）</label>
+<ul class="task-list">
+<li><label><input type="checkbox" />量化层插入展示</label></li>
+<li><label><input type="checkbox" />量化配置</label></li>
+<li><label><input type="checkbox" />框架使用使用</label></li>
+</ul></li>
+</ul></li>
+<li><p><label><input
+type="checkbox" />暗光网络的量化蒸馏方案</label></p>
+<ul class="task-list">
+<li><label><input type="checkbox" />如何加入蒸馏，为什么要这样加</label>
+<ul>
+<li><label><input type="checkbox" />蒸馏层如何进行确定</label></li>
+<li><label><input
+type="checkbox" />activation的hession矩阵迹计算原理</label></li>
+<li>[ ]</li>
+</ul></li>
+<li><label><input type="checkbox" />怎样实现量化</label>
+<ul class="task-list">
+<li><label><input
+type="checkbox" />位数为什么是前面和后面有所扩大</label></li>
+<li><label><input type="checkbox" />梯度反向传播方法方案</label></li>
+</ul></li>
+</ul></li>
+<li><p><label><input type="checkbox" />实验结果展示</label></p>
+<ul class="task-list">
+<li><label><input type="checkbox" />对比实验结果</label></li>
+</ul></li>
+</ul>
+<h3 id="sun-oct-15-171616-hkt-2023">Sun Oct 15 17:16:16 HKT 2023</h3>
+<p><del>1. 开启两个量化 + 蒸馏的实验 ,
+只有最后一层前一层的输出被蒸馏，使用了两个系数，一个是0.1，另一个是0.5（0.1的时间比较早，0.5是后放的）</del>
+<del>2.
+重新开始实验，发现自己的量化统计方式有些问题，没有加入训练元素（可能实际上也不需要加上训练元素，因为加载的模型早就稳定了）</del>
+3.
+突然发现模型中量化模型没有加载原始模型，所以效果很差，所以这里开了第三个模型</p>
+<h3 id="mon-oct-16-173948-hkt-2023">Mon Oct 16 17:39:48 HKT 2023</h3>
+<ol type="1">
+<li>昨天起的实验没有成功（因为服务器的一些问题导致一直开在数据加载阶段），在这里加入了一些特殊层数量化的方案，将两段网络的输入和输出的都进行高位数的量化，同时将两段网络中结尾上一层的输出作为蒸馏的依据,配置如下，与以往的实验相比，效果已经好起来了。
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">quant :</span> <span class="literal">True</span></span><br><span class="line"><span class="attr">test :</span> <span class="literal">False</span></span><br><span class="line"><span class="attr">onnx :</span> <span class="literal">False</span></span><br><span class="line"><span class="attr">quant_teacher :</span> <span class="literal">True</span></span><br><span class="line"><span class="attr">gpu_id :</span> <span class="number">3</span></span><br><span class="line"><span class="attr">batch_size :</span> <span class="number">6</span></span><br><span class="line"><span class="attr">debug :</span> <span class="literal">False</span></span><br><span class="line"><span class="attr">pdb_debug :</span> <span class="literal">False</span></span><br><span class="line"><span class="attr">load_model :</span> <span class="string">./onnx/SID_weights_690000.pth</span></span><br><span class="line"><span class="attr">load_quant_model :</span> </span><br><span class="line"><span class="attr">load_teacher_model :</span> <span class="string">./onnx/SID_weights_690000.pth</span></span><br><span class="line"><span class="attr">config_file_path :</span> <span class="string">./configfile/aba_config.yaml</span></span><br><span class="line"><span class="attr">extra_quantizer_dict:</span> </span><br><span class="line">   <span class="attr">special_layer:</span> </span><br><span class="line">      <span class="attr">input_layer :</span> <span class="number">10</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv1.Conv1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv1.lrelu:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv1.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv9.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_conv9.lrelu_dup1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBF.DBF_out:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.color_conv1.Conv1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.color_conv1.lrelu:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.color_conv1.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.mono_conv1.Conv1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.mono_conv1.lrelu:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.mono_conv1.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.dual_conv9.Conv1:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.dual_conv9.lrelu:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.dual_conv9.Conv2:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.dual_conv9.lrelu_dup1:</span> </span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line">      <span class="attr">DBLE.DBLE_out:</span> </span><br><span class="line">         <span class="attr">weight :</span> <span class="number">10</span> <span class="string">per_channel_affine</span></span><br><span class="line">         <span class="attr">activation :</span> <span class="number">10</span> <span class="string">per_tensor_affine</span></span><br><span class="line"><span class="attr">output_layer_list :</span> [<span class="string">&#x27;DBLE.dual_conv9.lrelu_dup1&#x27;</span>, <span class="string">&#x27;DBF.DBF_conv9.lrelu_dup1&#x27;</span>]</span><br><span class="line"><span class="attr">distill_config :</span> [<span class="string">&#x27;DBLE.dual_conv9.lrelu_dup1&#x27;</span>, <span class="string">&#x27;DBF.DBF_conv9.lrelu_dup1&#x27;</span>]</span><br><span class="line"><span class="attr">distill_coeff :</span> [<span class="number">0.7</span>, <span class="number">0.7</span>]</span><br></pre></td></tr></table></figure> ### Fri Oct 20 09:41:04 HKT 2023</li>
+<li>启动了一个没有蒸馏的实验,剩余实验正在修改代码</li>
+</ol>
+<h3 id="wed-oct-24-104548-hkt-2023">Wed Oct 24 10:45:48 HKT 2023</h3>
+<p>启动了一个蒸馏加权系数小一点的网络，发现权重越小效果越好,这会导致开始的情况不是那么坏</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="skk1faker 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="skk1faker 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%AF%95%E4%B8%9A/" rel="tag"># 毕业</a>
+              <a href="/tags/%E9%87%8F%E5%8C%96/" rel="tag"># 量化</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/10/13/clean-cachefile/" rel="next" title="清理linux垃圾内容">
+                  清理linux垃圾内容 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">skk1faker</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"skk1faker/blog_source","issue_term":"pathname","theme":"github-dark"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"skk1faker.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","width":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="小魔女帕琪 题目背景 从前有一个聪明的小魔女帕琪，兴趣是狩猎吸血鬼。 帕琪能熟练使用七种属性（金、木、水、火、土、日、月）的魔法，除了能使用这么多种属性魔法外，她还能将两种以上属性组合，从而唱出强力的魔法。比如说为了加强攻击力而将火和木组合，为了掩盖弱点而将火和土组合等等，变化非常丰富。 题目描述 现在帕琪与强大的夜之女王，吸血鬼蕾咪相遇了，夜之女王蕾咪具有非常强大的生命力，普通的魔法难以造成效果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="p3802-小魔女帕琪（数列中连续不同值数量）-概率论-排列组合">
+<meta property="og:url" content="https://skk1faker.github.io/2023/11/08/p3802-%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA%EF%BC%88%E6%95%B0%E5%88%97%E4%B8%AD%E8%BF%9E%E7%BB%AD%E4%B8%8D%E5%90%8C%E5%80%BC%E6%95%B0%E9%87%8F%EF%BC%89-%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/index.html">
+<meta property="og:site_name" content="skk1faker 笔记">
+<meta property="og:description" content="小魔女帕琪 题目背景 从前有一个聪明的小魔女帕琪，兴趣是狩猎吸血鬼。 帕琪能熟练使用七种属性（金、木、水、火、土、日、月）的魔法，除了能使用这么多种属性魔法外，她还能将两种以上属性组合，从而唱出强力的魔法。比如说为了加强攻击力而将火和木组合，为了掩盖弱点而将火和土组合等等，变化非常丰富。 题目描述 现在帕琪与强大的夜之女王，吸血鬼蕾咪相遇了，夜之女王蕾咪具有非常强大的生命力，普通的魔法难以造成效果">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skk1faker.github.io/2023/11/08/p3802-%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA%EF%BC%88%E6%95%B0%E5%88%97%E4%B8%AD%E8%BF%9E%E7%BB%AD%E4%B8%8D%E5%90%8C%E5%80%BC%E6%95%B0%E9%87%8F%EF%BC%89-%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/1%E6%8E%A8%E5%AF%BC.png">
+<meta property="article:published_time" content="2023-11-08T12:09:23.000Z">
+<meta property="article:modified_time" content="2025-02-22T04:04:39.592Z">
+<meta property="article:author" content="skk1faker">
+<meta property="article:tag" content="概率论,排列组合">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skk1faker.github.io/2023/11/08/p3802-%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA%EF%BC%88%E6%95%B0%E5%88%97%E4%B8%AD%E8%BF%9E%E7%BB%AD%E4%B8%8D%E5%90%8C%E5%80%BC%E6%95%B0%E9%87%8F%EF%BC%89-%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/1%E6%8E%A8%E5%AF%BC.png">
+
+
+<link rel="canonical" href="https://skk1faker.github.io/2023/11/08/p3802-%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA%EF%BC%88%E6%95%B0%E5%88%97%E4%B8%AD%E8%BF%9E%E7%BB%AD%E4%B8%8D%E5%90%8C%E5%80%BC%E6%95%B0%E9%87%8F%EF%BC%89-%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://skk1faker.github.io/2023/11/08/p3802-%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA%EF%BC%88%E6%95%B0%E5%88%97%E4%B8%AD%E8%BF%9E%E7%BB%AD%E4%B8%8D%E5%90%8C%E5%80%BC%E6%95%B0%E9%87%8F%EF%BC%89-%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/","path":"2023/11/08/p3802-小魔女帕琪（数列中连续不同值数量）-概率论-排列组合/","title":"p3802-小魔女帕琪（数列中连续不同值数量）-概率论-排列组合"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>p3802-小魔女帕琪（数列中连续不同值数量）-概率论-排列组合 | skk1faker 笔记</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">skk1faker 笔记</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-navigation"><a href="/navigation" rel="section"><i class="fa fa-user fa-fw"></i>导航</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA"><span class="nav-number">1.</span> <span class="nav-text">小魔女帕琪</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1"><span class="nav-number">1.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1"><span class="nav-number">1.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1"><span class="nav-number">1.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA"><span class="nav-number">1.6.</span> <span class="nav-text">提示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA-1-%E8%A7%A3%E9%87%8A"><span class="nav-number">1.6.0.1.</span> <span class="nav-text">样例输入输出 1 解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A7%84%E6%A8%A1%E4%B8%8E%E7%BA%A6%E5%AE%9A"><span class="nav-number">1.6.0.2.</span> <span class="nav-text">数据规模与约定</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">题解</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="skk1faker"
+      src="/images/acm-icpc.png">
+  <p class="site-author-name" itemprop="name">skk1faker</p>
+  <div class="site-description" itemprop="description">登峰造极</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skk1faker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skk1faker" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:skk1faker@163.com" title="E-Mail → mailto:skk1faker@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com" rel="noopener me" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2023/11/08/p3802-%E5%B0%8F%E9%AD%94%E5%A5%B3%E5%B8%95%E7%90%AA%EF%BC%88%E6%95%B0%E5%88%97%E4%B8%AD%E8%BF%9E%E7%BB%AD%E4%B8%8D%E5%90%8C%E5%80%BC%E6%95%B0%E9%87%8F%EF%BC%89-%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="p3802-小魔女帕琪（数列中连续不同值数量）-概率论-排列组合 | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          p3802-小魔女帕琪（数列中连续不同值数量）-概率论-排列组合
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-11-08 20:09:23" itemprop="dateCreated datePublished" datetime="2023-11-08T20:09:23+08:00">2023-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-02-22 12:04:39" itemprop="dateModified" datetime="2025-02-22T12:04:39+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="小魔女帕琪">小魔女帕琪</h1>
+<h2 id="题目背景">题目背景</h2>
+<p>从前有一个聪明的小魔女帕琪，兴趣是狩猎吸血鬼。</p>
+<p>帕琪能熟练使用七种属性（金、木、水、火、土、日、月）的魔法，除了能使用这么多种属性魔法外，她还能将两种以上属性组合，从而唱出强力的魔法。比如说为了加强攻击力而将火和木组合，为了掩盖弱点而将火和土组合等等，变化非常丰富。</p>
+<h2 id="题目描述">题目描述</h2>
+<p>现在帕琪与强大的夜之女王，吸血鬼蕾咪相遇了，夜之女王蕾咪具有非常强大的生命力，普通的魔法难以造成效果，只有终极魔法：帕琪七重奏才能对蕾咪造成伤害。帕琪七重奏的触发条件是：连续施放的
+<span class="math inline">\(7\)</span>
+个魔法中，如果魔法的属性各不相同，就能触发一次帕琪七重奏。</p>
+<p>请注意，无论前 <span class="math inline">\(6\)</span>
+个魔法是否已经参与施放终极魔法，只要连续 <span
+class="math inline">\(7\)</span>
+个魔法的属性各不相同，就会再触发一次终极魔法。例如，如果用序号来代表一种魔法，魔法的施放序列为
+<span class="math inline">\(1, 2, 3, 4, 5, 6,7, 1\)</span>，则前 <span
+class="math inline">\(7\)</span> 个魔法会触发一次终极魔法，后 <span
+class="math inline">\(7\)</span> 个魔法会再触发一次终极魔法。</p>
+<p>现在帕琪有 <span class="math inline">\(7\)</span>
+种属性的能量晶体，第 <span class="math inline">\(i\)</span>
+种晶体可以施放出属性为 <span class="math inline">\(i\)</span>
+的魔法，共有 <span class="math inline">\(a_i\)</span>
+个。每次施放魔法时，会等概率随机消耗一个现有的能量晶体，然后释放一个对应属性的魔法。</p>
+<p>现在帕琪想知道，她触发帕琪七重奏的期望次数是多少，可是她并不会算，于是找到了学
+OI 的你。</p>
+<h2 id="输入格式">输入格式</h2>
+<p>输入只有一行 <span class="math inline">\(7\)</span> 个整数，第 <span
+class="math inline">\(i\)</span> 个整数代表 <span
+class="math inline">\(a_i\)</span>。</p>
+<h2 id="输出格式">输出格式</h2>
+<p>输出一行一个实数代表答案，四舍五入保留三位小数。</p>
+<h2 id="样例-1">样例 #1</h2>
+<h3 id="样例输入-1">样例输入 #1</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1 1 1 1 1 1 1</span><br></pre></td></tr></table></figure>
+<h3 id="样例输出-1">样例输出 #1</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.000</span><br></pre></td></tr></table></figure>
+<h2 id="提示">提示</h2>
+<h4 id="样例输入输出-1-解释">样例输入输出 1 解释</h4>
+<p>显然一定会触发一次帕琪七重奏。</p>
+<h4 id="数据规模与约定">数据规模与约定</h4>
+<ul>
+<li>对于 <span class="math inline">\(30\%\)</span> 的数据，保证 <span
+class="math inline">\(\sum_{i = 1}^7 a_i \leq 10\)</span>。</li>
+<li>对于 <span class="math inline">\(100\%\)</span> 的数据，保证 <span
+class="math inline">\(0 \leq a_i \leq 10^9\)</span>，且 <span
+class="math inline">\(\sum_{i = 1}^7 a_i \leq 10^9\)</span>。</li>
+</ul>
+<h1 id="题解">题解</h1>
+<p>题意主要为，一个序列中有重复的7种元素，每种数列出现可能性一样，问数列中连续7个不同元素组成的序列个数期望为多少；
+题目要求的东西我们可以这样理解，根据排列组合有M中组合方案，现在要求每一种方案中出现连续7个不同元素的位置数量有多少，求数量和
+/ M大小</p>
+<p>这样理解之后题目要求的东西可以转化为求每一个位置前面由7种不同元素组成的排列数量，然后对每一个位置求和与无条件的排列总数进行比较，就能得到最终答案。</p>
+<figure>
+<img src="1推导.png" alt="1推导" />
+<figcaption aria-hidden="true">1推导</figcaption>
+</figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2023 Wangxinpeng. All rights reserved.</span></span><br><span class="line"><span class="comment">*   </span></span><br><span class="line"><span class="comment">*   filename：    p3802.cpp</span></span><br><span class="line"><span class="comment">*   username:     skt1faker</span></span><br><span class="line"><span class="comment">*   create time:  19:29  2023.11.08</span></span><br><span class="line"><span class="comment">    email:        skk1faker@163.com</span></span><br><span class="line"><span class="comment">*   descripe:     </span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEBUG0</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod1 = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod2 = <span class="number">998244353</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">double</span> S;</span><br><span class="line">  <span class="type">double</span> ans = <span class="number">5040</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">7</span>;i++)&#123;</span><br><span class="line">    <span class="type">double</span> temp;</span><br><span class="line">    cin&gt;&gt;temp;</span><br><span class="line">    S += temp;</span><br><span class="line">    ans *= temp;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">6</span>;i++)</span><br><span class="line">    ans /= S - i;</span><br><span class="line">  <span class="comment">//ans += 0.0005;</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%0.3lf\n&quot;</span>,ans);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="skk1faker 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="skk1faker 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88/" rel="tag"># 概率论,排列组合</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/11/08/p2011-%E8%AE%A1%E7%AE%97%E7%94%B5%E5%8E%8B-%E9%AB%98%E6%96%AF%E6%B6%88%E5%85%83/" rel="prev" title="p2011-计算电压-高斯消元">
+                  <i class="fa fa-angle-left"></i> p2011-计算电压-高斯消元
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/11/11/%E4%BB%BB%E6%84%8F%E5%8C%BA%E9%97%B4%E8%BF%9E%E4%B9%98%E8%AE%A1%E7%AE%97%E9%99%B7%E9%98%B1/" rel="next" title="任意区间连乘计算陷阱">
+                  任意区间连乘计算陷阱 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">skk1faker</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"skk1faker/blog_source","issue_term":"pathname","theme":"github-dark"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

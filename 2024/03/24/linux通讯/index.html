@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"skk1faker.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","width":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="信号 信号的机制 信号的忽略、捕捉和屏蔽 什么是未决信号集，以及进程的信号集如何处理 概念 阻塞信号集：当属于阻塞信号集的信号A来临时，进程并不会处理。只有信号A阻塞解除时，原先到来的信号A才会被处理。相当于一直阻塞不处理。 未决信号集：当前进程未处理的信号 信号特性  一个进程对应一个PCB，PCB中存在信号屏蔽字A，决定了进程屏蔽那些信号，当进程接收到某个信号后调用相应的信号处理函数，此时进程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux进程间通讯">
+<meta property="og:url" content="https://skk1faker.github.io/2024/03/24/linux%E9%80%9A%E8%AE%AF/index.html">
+<meta property="og:site_name" content="skk1faker 笔记">
+<meta property="og:description" content="信号 信号的机制 信号的忽略、捕捉和屏蔽 什么是未决信号集，以及进程的信号集如何处理 概念 阻塞信号集：当属于阻塞信号集的信号A来临时，进程并不会处理。只有信号A阻塞解除时，原先到来的信号A才会被处理。相当于一直阻塞不处理。 未决信号集：当前进程未处理的信号 信号特性  一个进程对应一个PCB，PCB中存在信号屏蔽字A，决定了进程屏蔽那些信号，当进程接收到某个信号后调用相应的信号处理函数，此时进程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skk1faker.github.io/2024/03/24/linux%E9%80%9A%E8%AE%AF/sss.png">
+<meta property="article:published_time" content="2024-03-24T06:24:31.000Z">
+<meta property="article:modified_time" content="2025-02-22T04:04:39.528Z">
+<meta property="article:author" content="skk1faker">
+<meta property="article:tag" content="信号">
+<meta property="article:tag" content="信号量">
+<meta property="article:tag" content="共享内存">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skk1faker.github.io/2024/03/24/linux%E9%80%9A%E8%AE%AF/sss.png">
+
+
+<link rel="canonical" href="https://skk1faker.github.io/2024/03/24/linux%E9%80%9A%E8%AE%AF/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://skk1faker.github.io/2024/03/24/linux%E9%80%9A%E8%AE%AF/","path":"2024/03/24/linux通讯/","title":"linux进程间通讯"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>linux进程间通讯 | skk1faker 笔记</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">skk1faker 笔记</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-navigation"><a href="/navigation" rel="section"><i class="fa fa-user fa-fw"></i>导航</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.</span> <span class="nav-text">信号</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E7%89%B9%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">信号特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E6%97%B6%E6%9C%BA"><span class="nav-number">1.3.</span> <span class="nav-text">信号处理时机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E5%BC%8F%E6%9C%89%E4%B8%89%E7%A7%8D"><span class="nav-number">1.4.</span> <span class="nav-text">信号的处理方式有三种</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E4%BF%A1%E5%8F%B7%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">处理信号的函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E8%BF%9B%E7%A8%8B%E7%9A%84%E4%BF%A1%E5%8F%B7%E9%9B%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">处理进程的信号集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%BB%91%E5%AE%9A%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">如何绑定信号处理函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E5%AE%9A%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0%E7%9A%84%E4%BF%A1%E5%8F%B7%E5%B1%8F%E8%94%BD%E5%AD%97"><span class="nav-number">1.5.3.</span> <span class="nav-text">如何设定处理函数的信号屏蔽字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%8F%91%E9%80%81%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.5.4.</span> <span class="nav-text">如何发送信号</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E8%8C%83"><span class="nav-number">1.6.</span> <span class="nav-text">示范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%97%E4%BF%A1%E5%8F%B7%E7%9A%84%E8%BF%9B%E7%A8%8B%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E5%8F%91%E9%80%81%E6%96%B9%E7%9A%84pid"><span class="nav-number">1.7.</span> <span class="nav-text">接受信号的进程如何查看发送方的pid</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">2.</span> <span class="nav-text">共享内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E5%92%8C%E6%96%87%E4%BB%B6%E6%98%A0%E5%B0%84"><span class="nav-number">2.1.</span> <span class="nav-text">如何创建共享内存和文件映射</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">3.</span> <span class="nav-text">信号量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">工作方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">创建方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E6%80%8E%E6%A0%B7%E4%BD%9C%E4%B8%BA%E9%94%81"><span class="nav-number">3.3.</span> <span class="nav-text">信号量怎样作为锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%94%81"><span class="nav-number">4.</span> <span class="nav-text">进程间的锁</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="skk1faker"
+      src="/images/acm-icpc.png">
+  <p class="site-author-name" itemprop="name">skk1faker</p>
+  <div class="site-description" itemprop="description">登峰造极</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skk1faker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skk1faker" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:skk1faker@163.com" title="E-Mail → mailto:skk1faker@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com" rel="noopener me" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2024/03/24/linux%E9%80%9A%E8%AE%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="linux进程间通讯 | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux进程间通讯
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-24 14:24:31" itemprop="dateCreated datePublished" datetime="2024-03-24T14:24:31+08:00">2024-03-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-02-22 12:04:39" itemprop="dateModified" datetime="2025-02-22T12:04:39+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="信号">信号</h1>
+<p><a target="_blank" rel="noopener" href="http://gityuan.com/2015/12/20/signal/">信号的机制</a><br />
+<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45074185/article/details/108626878">信号的忽略、捕捉和屏蔽</a>
+<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33154343/article/details/105448914">什么是未决信号集，以及进程的信号集如何处理</a></p>
+<h2 id="概念">概念</h2>
+<p>阻塞信号集：当属于阻塞信号集的信号A来临时，进程并不会处理。只有信号A阻塞解除时，原先到来的信号A才会被处理。相当于一直阻塞不处理。
+未决信号集：当前进程未处理的信号</p>
+<h2 id="信号特性">信号特性</h2>
+<ol type="1">
+<li>一个进程对应一个PCB，PCB中存在信号屏蔽字A，决定了进程屏蔽那些信号，当进程接收到某个信号后调用相应的信号处理函数，此时进程的信号屏蔽字不再是PCB中的A，而是此信号函数中<code>sa_mask</code>决定</li>
+<li>在信号A的捕捉函数执行期间，信号A会被自动屏蔽</li>
+<li>阻塞信号不支持排队，产生多次只记录一次。实时信号支持排队（阻塞信号的信号值为1-31，实时信号的信号值为32-64）(阻塞信号与不可靠信号同义，可靠信号与实时信号同义)</li>
+</ol>
+<h2 id="信号处理时机">信号处理时机</h2>
+<p>当进程唤醒或者调度后获取CPU，则会从内核态转到用户态时检测是否有signal等待处理，处理完，进程会把相应的未决信号从链表中去掉。<br />
+信号的处理时机在内核态转向用户态的过程中，故处理流程如下：<br />
+内核态 --&gt; signal信号处理 --&gt; 用户态</p>
+<h2 id="信号的处理方式有三种">信号的处理方式有三种</h2>
+<ol type="1">
+<li>默认处理：使用默认行为处理</li>
+<li>自定义：利用自定义信号处理函数执行</li>
+<li>忽略：接收后不做任何反应 ### 如何忽略信号 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">sighandler_t</span> <span class="title">signal</span><span class="params">(<span class="type">int</span> signum, <span class="type">sighandler_t</span> handler)</span></span>;</span><br><span class="line"><span class="comment">// 参数：</span></span><br><span class="line"><span class="comment">// signum： 信号</span></span><br><span class="line"><span class="comment">// handler：处理动作，传SIG_IGN表示忽略</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="处理信号的函数">处理信号的函数</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sigaction</span><span class="params">(<span class="type">int</span> signum, <span class="type">const</span> <span class="keyword">struct</span> sigaction *act, <span class="keyword">struct</span> sigaction *oldact)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// signum表示要处理的信号</span></span><br><span class="line"><span class="comment">// act表示处理信号时相应的设定，如信号屏蔽字，信号处理函数，以及信号处理后的表现</span></span><br><span class="line"><span class="comment">// oldact表示设定信号处理方式前signum信号如何处理，方便恢复以前的处理方式，可以传为NULL</span></span><br></pre></td></tr></table></figure>
+<p>可以看到处理函数中需要用sigaction结构体，sigaction结构体个数如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">   <span class="keyword">struct</span> <span class="title class_">sigaction</span> &#123;</span><br><span class="line">        <span class="built_in">void</span>     (*sa_handler)(<span class="type">int</span>);</span><br><span class="line">        <span class="built_in">void</span>     (*sa_sigaction)(<span class="type">int</span>, <span class="type">siginfo_t</span> *, <span class="type">void</span> *);</span><br><span class="line">        <span class="type">sigset_t</span>   sa_mask; </span><br><span class="line">        <span class="type">int</span>       sa_flags; </span><br><span class="line">        <span class="built_in">void</span>     (*sa_restorer)(<span class="type">void</span>);</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="comment">// sa_restorer：该元素是过时的，不应该使用，POSIX.1标准将不指定该元素。(弃用)</span></span><br><span class="line"><span class="comment">// sa_sigaction：当sa_flags被指定为SA_SIGINFO标志时，使用该信号处理程序。(很少使用)，但这种用法可获得发送信号的进程pid等丰富信息</span></span><br><span class="line"><span class="comment">// sa_handler：指定信号捕捉后的处理函数名(即注册函数)。也可赋值为SIG_IGN表忽略 或 SIG_DFL表执行默认动作</span></span><br><span class="line">   sa_sigaction接收函数形式为<span class="function"><span class="type">void</span> <span class="title">name</span><span class="params">(<span class="type">int</span> pid_num, <span class="type">siginfo_t</span> *info, <span class="type">void</span>* context)</span></span>;</span><br><span class="line">   sa_handler接收函数形式为<span class="function"><span class="type">void</span> <span class="title">name</span><span class="params">(<span class="type">int</span> pid_num)</span></span>;</span><br><span class="line"><span class="comment">// sa_mask: 调用信号处理函数时，所要屏蔽的信号集合(信号屏蔽字)。注意：仅在处理函数被调用期间屏蔽生效，是临时性设置。</span></span><br><span class="line"><span class="comment">// sa_flags：通常设置为0，表使用默认属性。以下为可设定值</span></span><br><span class="line"><span class="comment">//  SA_RESTART：使被信号打断的syscall重新发起。</span></span><br><span class="line"><span class="comment">//  SA_NOCLDSTOP：使父进程在它的子进程暂停或继续运行时不会收到 SIGCHLD 信号。</span></span><br><span class="line"><span class="comment">//  SA_NOCLDWAIT：使父进程在它的子进程退出时不会收到SIGCHLD信号，这时子进程如果退出也不会成为僵 尸进程。</span></span><br><span class="line"><span class="comment">//  SA_NODEFER：使对信号的屏蔽无效，即在信号处理函数执行期间仍能发出这个信号。</span></span><br><span class="line"><span class="comment">//  SA_RESETHAND：信号处理之后重新设置为默认的处理方式。</span></span><br><span class="line"><span class="comment">//  SA_SIGINFO：使用sa_sigaction成员而不是sa_handler作为信号处理函数。</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="处理进程的信号集">处理进程的信号集</h3>
+<p>主要包括设定阻塞信号集和读取未决信号集。 1. 设定阻塞信号集：
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sigprocmask</span><span class="params">(<span class="type">int</span> how, <span class="type">const</span> <span class="type">sigset_t</span> *restrict set, <span class="type">sigset_t</span> *restrict oset)</span></span>;</span><br><span class="line">    how： 假设当前屏蔽的信号屏蔽字符为 mask；</span><br><span class="line">        SIG_BLOCK: 相当于 mask = mask | <span class="built_in">set</span> (set 为需要屏蔽的信号集)</span><br><span class="line">        SIG_UNBLOCK： 相当于 mask = mask &amp; ~<span class="built_in">set</span> (set 为需要解除屏蔽的信号集)</span><br><span class="line">        SIG_SETMASK： 相当于 mask = <span class="built_in">set</span> (set 为用于替代原始屏蔽集的新屏蔽集)</span><br></pre></td></tr></table></figure> 2. 读取未决信号集</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sigpending</span><span class="params">(<span class="type">sigset_t</span> *set)</span></span>;</span><br><span class="line">读取当前信号的未决信号集。参数为输出参数，内核将未决信号集写入 set</span><br></pre></td></tr></table></figure>
+<h3 id="如何绑定信号处理函数">如何绑定信号处理函数</h3>
+<p><code>sa_handler</code>：指定信号捕捉后的处理函数名(即注册函数)。也可赋值为<code>SIG_IGN</code>表忽略
+或 <code>SIG_DFL</code>表执行默认动作</p>
+<h3 id="如何设定处理函数的信号屏蔽字">如何设定处理函数的信号屏蔽字</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sigemptyset</span>(<span class="type">sigset_t</span> *set);             <span class="comment">//：信号集全部清0；</span></span><br><span class="line"><span class="built_in">sigfillset</span>(<span class="type">sigset_t</span> *set);              <span class="comment">//： 信号集全部置1，则信号集包含linux支持的64种信号；</span></span><br><span class="line"><span class="built_in">sigaddset</span>(<span class="type">sigset_t</span> *set, <span class="type">int</span> signum);   <span class="comment">//：向信号集中加入signum信号；</span></span><br><span class="line"><span class="built_in">sigdelset</span>(<span class="type">sigset_t</span> *set, <span class="type">int</span> signum);   <span class="comment">//：向信号集中删除signum信号；</span></span><br><span class="line"><span class="built_in">sigismember</span>(<span class="type">const</span> <span class="type">sigset_t</span> *set, <span class="type">int</span> signum);<span class="comment">//：判定信号signum是否存在信号集中</span></span><br></pre></td></tr></table></figure>
+<h3 id="如何发送信号">如何发送信号</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span>()：用于向进程或进程组发送信号；</span><br><span class="line"><span class="built_in">sigqueue</span>()：只能向一个进程发送信号，不能像进程组发送信号；主要针对实时信号提出，与<span class="built_in">sigaction</span>()组合使用，当然也支持非实时信号的发送；</span><br><span class="line"><span class="built_in">alarm</span>()：用于调用进程指定时间后发出SIGALARM信号；</span><br><span class="line"><span class="built_in">setitimer</span>()：设置定时器，计时达到后给进程发送SIGALRM信号，功能比alarm更强大；</span><br><span class="line"><span class="built_in">abort</span>()：向进程发送SIGABORT信号，默认进程会异常退出。</span><br><span class="line"><span class="built_in">raise</span>()：用于向进程自身发送信号</span><br></pre></td></tr></table></figure>
+<h2 id="示范">示范</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LEN 4100</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">signal_handler</span><span class="params">(<span class="type">int</span> signum, <span class="type">siginfo_t</span> *info, <span class="type">void</span> *context)</span> </span>&#123;           <span class="comment">// 得到相应发送信号的进程号</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Received signal %d from process %ld\n&quot;</span>, signum, (<span class="type">long</span>)info-&gt;si_pid);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sig_haha</span><span class="params">(<span class="type">int</span> num)</span></span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;fuck\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sigaction</span> sa;</span><br><span class="line">    sa.sa_flags = SA_SIGINFO;</span><br><span class="line">  <span class="comment">//sa.sa_sigaction = signal_handler;</span></span><br><span class="line">  sa.sa_handler = sig_haha;</span><br><span class="line">  <span class="built_in">sigemptyset</span>(&amp;sa.sa_mask);</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">sigaction</span>(<span class="number">3</span> , &amp;sa, <span class="literal">NULL</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="built_in">perror</span>(<span class="string">&quot;sigaction&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">int</span> id;</span><br><span class="line">      <span class="type">pid_t</span> father_pid = <span class="built_in">getpid</span>();</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,father_pid);</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">1</span>;i++)&#123;</span><br><span class="line">          id = fork();</span><br><span class="line">    <span class="keyword">if</span>(id != <span class="number">0</span>)<span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(id != <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="comment">//printf(&quot;%d\n&quot;,father_pid);</span></span><br><span class="line">    <span class="built_in">kill</span>(father_pid,<span class="number">3</span>);</span><br><span class="line">    <span class="comment">//  进行处理</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Wait for a signal</span></span><br><span class="line">      <span class="built_in">pause</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2
+id="接受信号的进程如何查看发送方的pid">接受信号的进程如何查看发送方的pid</h2>
+<p>接受信号的一方可以通过回调函数查看发送信号的进程pid，这种方法使得进程可以使用信号互相交流，而不是单方面的传递信息。<br />
+关键点是使用<code>sa_sigaction</code>接收函数。 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">signal_handler</span><span class="params">(<span class="type">int</span> signum, <span class="type">siginfo_t</span> *info, <span class="type">void</span> *context)</span> </span>&#123;           <span class="comment">// 得到相应发送信号的进程号</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Received signal %d from process %ld\n&quot;</span>, signum, (<span class="type">long</span>)info-&gt;si_pid);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sigaction</span> sa;</span><br><span class="line">    sa.sa_flags = SA_SIGINFO;</span><br><span class="line">  sa.sa_sigaction = signal_handler;</span><br><span class="line">  <span class="built_in">sigemptyset</span>(&amp;sa.sa_mask);</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">sigaction</span>(<span class="number">3</span> , &amp;sa, <span class="literal">NULL</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="built_in">perror</span>(<span class="string">&quot;sigaction&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">int</span> id;</span><br><span class="line">      <span class="type">pid_t</span> father_pid = <span class="built_in">getpid</span>();</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,father_pid);</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt; <span class="number">1</span>;i++)&#123;</span><br><span class="line">          id = fork();</span><br><span class="line">    <span class="keyword">if</span>(id != <span class="number">0</span>)<span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(id != <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="comment">//printf(&quot;%d\n&quot;,father_pid);</span></span><br><span class="line">    <span class="built_in">kill</span>(father_pid,<span class="number">3</span>);</span><br><span class="line">    <span class="comment">//  进行处理</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Wait for a signal</span></span><br><span class="line">      <span class="built_in">pause</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<h1 id="共享内存">共享内存</h1>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/modi000/article/details/125040478">两种共享内存的机制</a><br />
+<a target="_blank" rel="noopener" href="http://blog.jqian.net/post/linux-shm.html">两种共享内存</a> <a
+target="_blank" rel="noopener" href="https://blog.csdn.net/daiyudong2020/article/details/50500651">文件映射和共享内存</a>
+<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/sculpta/article/details/105923513">多进程使用文件映射实现共享内存功能</a>
+现代linux中存在两种共享内存的机制 1.
+POSIX共享内存<code>(shm_open()、shm_unlink())</code>，需要结合<code>mmap</code>使用
+2. System V共享内存<code>(shmget()、shmat()、shmdt())</code></p>
+<p>两种机制都能实现共享内存的基本功能，区别在于 1. System
+V共享内存是持久的，如果程序中不进行明确的删除则会永久留在内存里，知道系统关机
+2.
+mmap映射的内存在不是持久化的，假如进程关闭，映射随即失效，除非事前已经映射到了一个文件上。</p>
+<h2 id="如何创建共享内存和文件映射">如何创建共享内存和文件映射</h2>
+<p><img src="sss.png" alt="共享内存和文件映射的创建" /><br />
+1.
+内存映射文件，由open函数返回文件描述符，再由mmap将文件映射到当前进程空间地址中的文件。多个进程可对一个文件进行映射，可进行进程间的通信。<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/sculpta/article/details/105923513">文件映射实现进程间通讯</a></p>
+<p>具体的设置还得看代码才能理解，这里对代码进行注释，给出各个参数的含义
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">read_</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="type">int</span> fd = <span class="built_in">open</span>(<span class="string">&quot;./input&quot;</span>,O_RDWR,<span class="number">0777</span>);</span><br><span class="line">  <span class="type">int</span> len = <span class="built_in">lseek</span>(fd,<span class="number">0</span>,SEEK_END);   </span><br><span class="line">    <span class="comment">// 所有文件打开都有一个文件偏移量(cfo, current file offset)，表示文件开头到当前读写位置的字节数，是一个非负整数。所有文件读写都从cfo开始,每次读写都会使cfo增大读写字节数，    </span></span><br><span class="line">    <span class="comment">// off_t lseek(int fd, off_t offset, int whence);</span></span><br><span class="line">    <span class="comment">// offset设置打开的文件偏移位置，返回值是指针相对于文件开头的偏移量，也就是移动后的指针位置。</span></span><br><span class="line">    <span class="comment">// whence 表示偏移量相对哪里来说，用于表示offset的处理方式</span></span><br><span class="line">    <span class="comment">//      1. SEEK_END表示，文件偏移量cfo = 文件总长度 + offset</span></span><br><span class="line">    <span class="comment">//      2. SEEK_CUR表示，文件偏移量cfo = 当前文件偏移量 + offset</span></span><br><span class="line">    <span class="comment">//      3. SEEK_SET表示，文件偏移量cfo = offset</span></span><br><span class="line">    <span class="type">char</span> *buffer1 = (<span class="type">char</span> *)<span class="built_in">mmap</span>(<span class="literal">NULL</span>, len, PROT_READ|PROT_WRITE, MAP_SHARED, fd, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//       void *mmap(void *addr, size_t length, int prot, int flags,int fd, off_t offset);</span></span><br><span class="line">    <span class="comment">// 1. addr是一个映射地址，这个地址只是建议内核这么做，内核具体做法要经过实际判断（如当前位置是否存在映射、是否为页边界等）给出映射地址，如果为NULL的话，则内核自行分配映射地址。</span></span><br><span class="line">    <span class="comment">// 2. length和offset表示了文件映射范围，设开始处为0，那么映射范围为[offset, offset + length], offset必须为页大小的整数倍</span></span><br><span class="line">    <span class="comment">// 3. prot 表示映射区的保护方式，即可对映射区域做怎样的操作，有如下选项</span></span><br><span class="line">    <span class="comment">//      1. PROT_EXEC： 映射区可被执行</span></span><br><span class="line">    <span class="comment">//      2. PROT_READ： 映射区可被读取</span></span><br><span class="line">    <span class="comment">//      3. PROT_WRITE： 映射区可被写入</span></span><br><span class="line">    <span class="comment">//      4. PROT_NONE： 映射区不能存取</span></span><br><span class="line">    <span class="comment">// 4. flag表示映射区域的特性</span></span><br><span class="line">    <span class="comment">//      1. MAP_SHARED： 对映射区域的写入数据会复制回文件, 且允许其他映射该文件的进程共享</span></span><br><span class="line">    <span class="comment">//      2. MAP_PRIVATE： 对映射区域的写入操作会产生一个映射的复制(copy-on-write), 对此区域所做的修改不会写回原文件。</span></span><br><span class="line">    <span class="comment">// 5. fd： 由open返回的文件描述符, 代表要映射的文件</span></span><br><span class="line">    <span class="comment">// 函数失败返回-1 MAP_FAILED( (void *) -1),成功返回映射区域</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;first = %s\n&quot;</span>,buffer1);</span><br><span class="line">  <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;second = %s\n&quot;</span>,buffer1);</span><br><span class="line">    <span class="built_in">munmap</span>(buffer1,len);    <span class="comment">// 为防止内存泄漏，应手动将映射释放掉, 成功返回0，失败返回-1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">write_</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="type">int</span> fd = <span class="built_in">open</span>(<span class="string">&quot;./input&quot;</span>,O_RDWR,<span class="number">0777</span>);</span><br><span class="line">  <span class="type">char</span> data[<span class="number">100</span>] = <span class="string">&quot;safssajhfjasfhgjsdgj&quot;</span>;</span><br><span class="line">  <span class="built_in">lseek</span>(fd,(<span class="built_in">strlen</span>(data) - <span class="number">1</span>) * <span class="built_in">sizeof</span>(<span class="type">char</span>),SEEK_END);</span><br><span class="line">  <span class="built_in">write</span>(fd, <span class="string">&quot; &quot;</span>,<span class="number">1</span>);</span><br><span class="line">  <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">  <span class="type">char</span> *buffer1 = (<span class="type">char</span> *)<span class="built_in">mmap</span>(<span class="literal">NULL</span>, <span class="built_in">strlen</span>(data) * <span class="built_in">sizeof</span>(<span class="type">char</span>), PROT_READ|PROT_WRITE, MAP_SHARED, fd, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">memcpy</span>(buffer1,data,<span class="built_in">strlen</span>(data) * <span class="built_in">sizeof</span>(<span class="type">char</span>));</span><br><span class="line">    <span class="built_in">munmap</span>(buffer1, <span class="built_in">strlen</span>(data) * <span class="built_in">sizeof</span>(<span class="type">char</span> ));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">pid_t</span> pid = fork();</span><br><span class="line">  <span class="keyword">if</span>(pid == <span class="number">-1</span>)&#123; </span><br><span class="line">    <span class="built_in">perror</span>(<span class="string">&quot;创建进程出错\n&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(pid == <span class="number">0</span>)<span class="built_in">read_</span>();</span><br><span class="line">  <span class="keyword">else</span> <span class="built_in">write_</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure> 输出为 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">skt1faker@nwpu ~/rm</span><br><span class="line">$ ./a.out                                                                           [21:07:00]</span><br><span class="line">first =</span><br><span class="line"></span><br><span class="line">second = safssajhfjasfhgjsdgj</span><br></pre></td></tr></table></figure>
+可以看到通过对文件的映射，可以实现两个进程的内存间的通信</p>
+<ol start="2" type="1">
+<li>共享内存
+实现方法和上面依旧一样，只不过将<code>open</code>函数使用<code>shm_open</code>代替,
+并且存在一些注意的点</li>
+</ol>
+<ul>
+<li>mmap映射长度必须大于一个页大小，否则会出现bus error</li>
+<li>A、B两进程都是用同一共享内存，但A进程将内存munmap后B进程依旧可以使用。可见下代码</li>
+<li>由于mmap不能改变文件大小，所以最初文件大小应使用ftruncate(fd,length)进行设定</li>
+<li>映射文件名不能带有路径，如"./input"或"/home/skt1faker/ff",只能为"input",
+原因与tmpfs文件系统有关，tmpfs将所有文件放在虚拟内存中，并不放在磁盘上，在实现POSIX共享内存时，会预设tmpfs文件系统挂载在/dev/shm/，<code>open_shm</code>实现时<code>open_shm</code>给出的文件路径和<code>/dev/shm</code>进行拼接，所以给出<code>open_shm</code>中的文件名路径应为相对路径，并且在/dev/shm下。如<code>shm_open("./haha/sss",O_CREAT|O_TRUNC|O_RDWR,0777);</code>必须存在<code>/dev/shm/haha</code></li>
+<li>共享内存使用链接库rt，编译选项中加入-lrt即可</li>
+<li><code>O_TRUNC</code>选项只在创建共享内存文件时使用，如果打开则不可使用此选项，会造成打开前其他进程写入内容的清空</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LEN 4100</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 编译链接库为-lrt</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">read_</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="comment">// 1. 文件名不可为input</span></span><br><span class="line">  <span class="comment">// 2. O_TRUNC表示将打开文件的内容清空</span></span><br><span class="line">  <span class="comment">// 3. O_CREAT表示文件不存在时将文件创建。</span></span><br><span class="line">  <span class="comment">// 4. O_RDWR表示文件读写</span></span><br><span class="line">    <span class="built_in">sleep</span>(<span class="number">1</span>);       <span class="comment">// 等待写文件打开共享内存</span></span><br><span class="line">  <span class="type">int</span> fd = <span class="built_in">shm_open</span>(<span class="string">&quot;input&quot;</span>,O_CREAT|O_RDWR,<span class="number">0777</span>);       <span class="comment">// O_TRUNC 会将文件清空，后打开的共享内存文件尽量不要将文件清空，因为可能会造成之前其他进程写入内容消失。</span></span><br><span class="line">  <span class="type">int</span> len = LEN;   </span><br><span class="line">  <span class="comment">// 用于共享内存的mmap中，length值应大于一个页的大小,即至少为4096</span></span><br><span class="line">  <span class="type">char</span> *buffer1 = (<span class="type">char</span> *)<span class="built_in">mmap</span>(<span class="literal">NULL</span>, len, PROT_READ|PROT_WRITE, MAP_SHARED, fd, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;first = %s\n&quot;</span>,buffer1);</span><br><span class="line">  <span class="built_in">sleep</span>(<span class="number">3</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;second = %s\n&quot;</span>,buffer1);</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">munmap</span>(buffer1,len) != <span class="number">-1</span>)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;read munmap\n&quot;</span>);</span><br><span class="line">  <span class="built_in">close</span>(fd);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">write_</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="type">int</span> fd = <span class="built_in">shm_open</span>(<span class="string">&quot;input&quot;</span>,O_CREAT|O_TRUNC|O_RDWR,<span class="number">0777</span>);</span><br><span class="line">  <span class="type">char</span> data[LEN] = <span class="string">&quot;safssajhfjasfhgjsdgj&quot;</span>;   <span class="comment">// 大小为页的整数被，否则会出现bus error</span></span><br><span class="line">  <span class="built_in">ftruncate</span>(fd, <span class="built_in">sizeof</span>(data));                <span class="comment">// 修改文件大小</span></span><br><span class="line">  <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">  <span class="type">char</span> *buffer1 = (<span class="type">char</span> *)<span class="built_in">mmap</span>(<span class="literal">NULL</span>, <span class="built_in">sizeof</span>(data), PROT_READ|PROT_WRITE, MAP_SHARED, fd, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">strncpy</span>(buffer1,data,<span class="built_in">strlen</span>(data));</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">munmap</span>(buffer1, <span class="built_in">sizeof</span>(data)) != <span class="number">-1</span>)   <span class="comment">// 可以，munmap，munmap后其他进程依旧可以访问</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;write munmap\n&quot;</span>);</span><br><span class="line">  <span class="built_in">close</span>(fd);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">pid_t</span> pid = fork();</span><br><span class="line">  <span class="keyword">if</span>(pid == <span class="number">-1</span>)&#123; </span><br><span class="line">    <span class="built_in">perror</span>(<span class="string">&quot;创建进程出错\n&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(pid != <span class="number">0</span>)<span class="built_in">read_</span>();</span><br><span class="line">  <span class="keyword">else</span> <span class="built_in">write_</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>程序输出为 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">skt1faker@nwpu ~/rm</span><br><span class="line">$ gcc a.cpp -g -o <span class="built_in">test</span> -lrt &amp;&amp; ./test</span><br><span class="line">first =</span><br><span class="line">write munmap</span><br><span class="line">second = safssajhfjasfhgjsdgj</span><br><span class="line"><span class="built_in">read</span> munmap</span><br><span class="line">(homework)</span><br></pre></td></tr></table></figure></p>
+<h1 id="信号量">信号量</h1>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/649647971">参考</a> <a
+target="_blank" rel="noopener" href="https://www.jianshu.com/p/ee5bb8948dc0">共享内存和信号量实现同步</a></p>
+<h2 id="工作方式">工作方式</h2>
+<p>信号量作用为同步，而不是传递信息，信号的工作方式如下： 1.
+当信号量值为0时，试图对信号量-1的进程会阻塞 2.
+当信号量大于0时，试图对信号量+1的进程会阻塞</p>
+<p>主要使用三种函数：<br />
+1. <code>int sem_wait(sem_t *sem)</code>： -
+如果信号量值<code>*sem &gt; 0</code>，则<code>sem_wait</code>会立即返回,
+并将<code>*sem - 1</code>。 -
+如果<code>*sem == 0</code>，则<code>sem_wait()</code>会阻塞至信号量大于0。
+- 返回值0表示成功，-1表示失败</p>
+<ol start="2" type="1">
+<li><code>int sem_post(sem_t *sem)</code>：</li>
+</ol>
+<ul>
+<li>以原子操作的形式将信号量值+1</li>
+<li>返回值0表示成功，-1表示失败</li>
+</ul>
+<ol start="3" type="1">
+<li><code>int sem_destory(sem_t * sem);</code>：</li>
+</ol>
+<ul>
+<li>该函数对用完的信号量进行清理</li>
+<li>返回值成功为0，失败为-1；</li>
+</ul>
+<h2 id="创建方法">创建方法</h2>
+<p>进程间使用信号量通讯有两种方式 1. 匿名信号量<br />
+匿名信号量使用共享内存实现，利用mmap生成一个文件映射或者匿名映射（对应参数中<code>fd = -1</code>，或<code>fd = open("/dev/zero",O_RDWR)</code>）。生成的信号量使用<code>sem_init</code>初始化</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">sem_init</span><span class="params">(<span class="type">sem_t</span> *sem, <span class="type">int</span> pshared, <span class="type">unsigned</span> <span class="type">int</span> value)</span></span>;</span><br><span class="line"><span class="comment">// pshared表示信号量在进程内（线程间）使用还是进程间使用。</span></span><br><span class="line"><span class="comment">// sem为匿名信号量地址</span></span><br></pre></td></tr></table></figure>
+<p>具体创建方式 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LEN 4100</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">sem_t</span> *sem_id = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="type">pid_t</span> pid;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  // 不知应不应改算匿名信号量</span></span><br><span class="line"><span class="comment">  int fd = open(&quot;./input&quot;,o_rdwr,0777);</span></span><br><span class="line"><span class="comment">  sem_id = (sem_t *)mmap(null, sizeof(sem_t), prot_read | prot_write, map_shared | map_anonymous, fd, 0);</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  // 匿名信号量</span></span><br><span class="line"><span class="comment">  int fd = open(&quot;/dev/zero&quot;,o_rdwr);</span></span><br><span class="line"><span class="comment">  sem_id = (sem_t *)mmap(null, sizeof(sem_t), prot_read | prot_write, map_shared | map_anonymous, fd, 0);</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="comment">// 匿名信号量</span></span><br><span class="line">  <span class="comment">//sem_id = (sem_t *)mmap(null, sizeof(sem_t), prot_read | prot_write, map_shared | map_anonymous, -1, 0);</span></span><br><span class="line">  <span class="built_in">sem_init</span>(sem_id, <span class="number">1</span>, <span class="number">1</span>);   <span class="comment">/// 匿名信号量初始化</span></span><br><span class="line">  pid = fork();</span><br><span class="line">  <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">sem_wait</span>(sem_id);     <span class="comment">// -- 1</span></span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;This is Parent Process\n&quot;</span>);</span><br><span class="line">      <span class="built_in">sem_post</span>(sem_id);</span><br><span class="line">      <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="number">0</span> == -pid) &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">sem_wait</span>(sem_id);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;This is Child Process\n&quot;</span>);</span><br><span class="line">      <span class="built_in">sem_post</span>(sem_id);   <span class="comment">// -- 2</span></span><br><span class="line">      <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+注意<code>MAP_SHARED</code>表示多个进程共享的标记</p>
+<ol start="2" type="1">
+<li>命名信号量</li>
+</ol>
+<p>命名信号量使用<code>sem_open</code>，如同打开文件一样，打开信号量。可用于创建一个信号量或打开一个已有的信号量。
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span>           <span class="comment">/* For O_* constants */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span>        <span class="comment">/* For mode constants */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">sem_t</span> *<span class="title">sem_open</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *name, <span class="type">int</span> oflag)</span></span>;</span><br><span class="line"><span class="function"><span class="type">sem_t</span> *<span class="title">sem_open</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *name, <span class="type">int</span> oflag,</span></span></span><br><span class="line"><span class="params"><span class="function">                <span class="type">mode_t</span> mode, <span class="type">unsigned</span> <span class="type">int</span> value)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">     name 表示信号量名字，多个进程使用同一个信号量需要将信号量名字统一。</span></span><br><span class="line"><span class="comment">     oflag表示创建文件的行为，一般为O_CREAT，即不存在则创建，存在则直接打开。</span></span><br><span class="line"><span class="comment">     mode表示其他组进程对信号量的访问权限</span></span><br><span class="line"><span class="comment">     value表示信号量的初值，但是本人在实验中怎样设置都是0。</span></span><br><span class="line"><span class="comment">     </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">Link with -pthread.</span><br></pre></td></tr></table></figure>
+<b><font color = red>注意初次创建信号量时必须给出mode和value，其他进程打开时不给此项</font></b>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LEN 4100</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">sem_t</span> *sem_id = <span class="built_in">sem_open</span>(<span class="string">&quot;input&quot;</span>,O_CREAT,<span class="number">0777</span>,<span class="number">0</span>);   <span class="comment">// 不管初值设为多少，好像信号量初始值都为0</span></span><br><span class="line">  <span class="type">pid_t</span> pid;</span><br><span class="line">  pid = fork();</span><br><span class="line">  <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">sem_post</span>(sem_id);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;This is Parent Process\n&quot;</span>);</span><br><span class="line">      <span class="built_in">sem_wait</span>(sem_id);     <span class="comment">// -- 1</span></span><br><span class="line">      <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="number">0</span> == pid) &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">sem_post</span>(sem_id);   <span class="comment">// -- 2</span></span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;This is Child Process\n&quot;</span>);</span><br><span class="line">      <span class="built_in">sem_wait</span>(sem_id);</span><br><span class="line">      <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file1</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span> </span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">sem_t</span> *sem;</span><br><span class="line">    sem = <span class="built_in">sem_open</span>(<span class="string">&quot;MY_SEM&quot;</span>, <span class="number">0</span>_CREAT, <span class="number">666</span>, <span class="number">0</span>); </span><br><span class="line">    <span class="type">int</span> i= <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">sem_wait</span>(sem);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Process 1 : i = %d\n&quot;</span>, i++); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sem_close</span>(sem)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// file 2</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="type">sem_t</span> *sem;</span><br><span class="line">    sem = <span class="built_in">sem_open</span>(<span class="string">&quot;MY_SEM&quot;</span>, O_CREAT); </span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Process 2 : i = %d\n&quot;</span>, i++); </span><br><span class="line">        <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">        <span class="built_in">sem_post</span> (sem); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sem_close</span>(sem); <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="信号量怎样作为锁">信号量怎样作为锁</h2>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/tjhon/article/details/14120213">sem_wait是原子操作</a><br />
+<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/479824411">信号量如何实现锁</a><br />
+实现锁需要原子操作，来保证上锁时锁的值不会被干扰,
+使得上锁代码只能有一个进程处理，保证了原子性。<br />
+<code>sem_wait(或sem_t *sem)</code>相当于P操作，即申请资源。
+测试所指定信号量的值,它的操作是原子的。同理<code>int sem_post(sem_t *sem)</code>也是原子的，可以用作锁。<br />
+由于只有<code>sem_wait</code>函数会发生阻塞，所以将其放在前方，保证未获取锁时阻塞。</p>
+<p>如下所示，进程间信号的量实现的锁可如下所示:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">sem_t</span> *sem_id = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="type">pid_t</span> pid;</span><br><span class="line">  sem_id = (<span class="type">sem_t</span> *)<span class="built_in">mmap</span>(<span class="literal">NULL</span>, <span class="built_in">sizeof</span>(<span class="type">sem_t</span>), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, <span class="number">-1</span>, <span class="number">0</span>);       <span class="comment">// MAP_SHARED 进程间共享</span></span><br><span class="line">  <span class="built_in">sem_init</span>(sem_id, <span class="number">1</span>, <span class="number">1</span>);       <span class="comment">//第二个参数为1表示进程间共享，为0表示线程间共享， 最后一个参数表示sem_id的初始值为1</span></span><br><span class="line">  pid = fork();</span><br><span class="line">  <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">sem_wait</span>(sem_id);     <span class="comment">// 加锁</span></span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;This is Parent Process\n&quot;</span>);</span><br><span class="line">      <span class="built_in">sem_post</span>(sem_id);     <span class="comment">// 解锁</span></span><br><span class="line">      <span class="built_in">sleep</span>(<span class="number">1</span>);             </span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="number">0</span> == -pid) &#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">sem_wait</span>(sem_id);     <span class="comment">// 加锁</span></span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;This is Child Process\n&quot;</span>);</span><br><span class="line">      <span class="built_in">sem_post</span>(sem_id);   <span class="comment">// 解锁</span></span><br><span class="line">      <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上述代码中进程会交替执行，打印效果如下： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">skt1faker@nwpu ~/rm</span><br><span class="line">$ ./a.out                                                                           [16:43:26]</span><br><span class="line">This is Parent Process</span><br><span class="line">This is Child Process</span><br><span class="line">This is Parent Process</span><br><span class="line">This is Child Process</span><br><span class="line">This is Parent Process</span><br><span class="line">This is Child Process</span><br><span class="line">This is Parent Process</span><br><span class="line">This is Child Process</span><br><span class="line">This is Parent Process</span><br><span class="line">This is Child Process</span><br><span class="line">This is Parent Process</span><br><span class="line">This is Child Process</span><br></pre></td></tr></table></figure> ##
+信号量实现进程间生产者消费者模型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// 生产者</span><br><span class="line">void producer()&#123;</span><br><span class="line">sem_wait(queue_lock);        // 保护生产队列，上锁</span><br><span class="line">sem_wait(empty_slot);        // 消耗一个空槽</span><br><span class="line"></span><br><span class="line">sleep(1);   // 模拟生产过程</span><br><span class="line"></span><br><span class="line">sem_post(full_slot);        // 生产一个满槽</span><br><span class="line">sem_post(queue_lock);       // 解锁</span><br><span class="line">&#125;</span><br><span class="line">void costumer()&#123;</span><br><span class="line">sem_wait(queue_lock);        // 保护生产队列，上锁</span><br><span class="line">sem_post(full_slot);        // 消耗一个满槽</span><br><span class="line"></span><br><span class="line">sleep(1);                   // 模拟消费过程</span><br><span class="line"></span><br><span class="line">sem_wait(empty_slot);        // 生产一个空槽</span><br><span class="line">sem_post(queue_lock);       // 解锁</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="进程间的锁">进程间的锁</h1>
+<p>进程间也能拥有锁，主要使用<code>pthread_mutex</code>与共享内存，一半这种函数主要用于线程中的互斥，但是如果在使用中设置了<code>PTHREAD_PROCESS_SHARED</code>选项，那么两个进程可以使用这样的锁进行同步。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="skk1faker 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="skk1faker 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E4%BF%A1%E5%8F%B7/" rel="tag"># 信号</a>
+              <a href="/tags/%E4%BF%A1%E5%8F%B7%E9%87%8F/" rel="tag"># 信号量</a>
+              <a href="/tags/%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/" rel="tag"># 共享内存</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/03/18/%E4%BB%BB%E5%8A%A1/" rel="prev" title="任务">
+                  <i class="fa fa-angle-left"></i> 任务
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/03/25/man-kill%E5%91%BD%E4%BB%A4%E5%BE%97%E5%88%B0%E7%9A%84%E4%B8%8D%E6%98%AFc%E5%87%BD%E6%95%B0%EF%BC%8C%E5%BA%94%E6%80%8E%E6%A0%B7%E5%A4%84%E7%90%86/" rel="next" title="man kill命令得到的不是c函数，应怎样处理">
+                  man kill命令得到的不是c函数，应怎样处理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">skk1faker</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"skk1faker/blog_source","issue_term":"pathname","theme":"github-dark"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

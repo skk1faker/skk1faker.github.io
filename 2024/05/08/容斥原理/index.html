@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"skk1faker.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","width":240,"display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="# 容斥原理定义 现有k个条件\(f_{1},f_{2}...f_{k}\)，现求满足任意一个条件的元素数量（注意不是同时满足上述条件，而是满足任意一个条件的元素数量） 使用我文氏图表示如下：   wenshitu  求解方法 \[ \begin{aligned} \left|\bigcup_{i&#x3D;1}^{n} f_{i}\right|&#x3D; &amp; \sum_{i}\left|f_{i}\rig">
+<meta property="og:type" content="article">
+<meta property="og:title" content="容斥原理">
+<meta property="og:url" content="https://skk1faker.github.io/2024/05/08/%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="skk1faker 笔记">
+<meta property="og:description" content="# 容斥原理定义 现有k个条件\(f_{1},f_{2}...f_{k}\)，现求满足任意一个条件的元素数量（注意不是同时满足上述条件，而是满足任意一个条件的元素数量） 使用我文氏图表示如下：   wenshitu  求解方法 \[ \begin{aligned} \left|\bigcup_{i&#x3D;1}^{n} f_{i}\right|&#x3D; &amp; \sum_{i}\left|f_{i}\rig">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skk1faker.github.io/2024/05/08/%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86/wenshitu.png">
+<meta property="article:published_time" content="2024-05-08T06:44:50.000Z">
+<meta property="article:modified_time" content="2025-02-22T04:41:23.412Z">
+<meta property="article:author" content="skk1faker">
+<meta property="article:tag" content="数学">
+<meta property="article:tag" content="acm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skk1faker.github.io/2024/05/08/%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86/wenshitu.png">
+
+
+<link rel="canonical" href="https://skk1faker.github.io/2024/05/08/%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://skk1faker.github.io/2024/05/08/%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86/","path":"2024/05/08/容斥原理/","title":"容斥原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>容斥原理 | skk1faker 笔记</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">skk1faker 笔记</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-navigation"><a href="/navigation" rel="section"><i class="fa fa-user fa-fw"></i>导航</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">求解方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E7%9A%84%E4%BA%A4%E5%A6%82%E4%BD%95%E6%B1%82%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">集合的交如何求解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="skk1faker"
+      src="/images/acm-icpc.png">
+  <p class="site-author-name" itemprop="name">skk1faker</p>
+  <div class="site-description" itemprop="description">登峰造极</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skk1faker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skk1faker" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:skk1faker@163.com" title="E-Mail → mailto:skk1faker@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com" rel="noopener me" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2024/05/08/%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="容斥原理 | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          容斥原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-05-08 14:44:50" itemprop="dateCreated datePublished" datetime="2024-05-08T14:44:50+08:00">2024-05-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-02-22 12:41:23" itemprop="dateModified" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p># 容斥原理定义</p>
+<p>现有k个条件<span
+class="math inline">\(f_{1},f_{2}...f_{k}\)</span>，现求满足任意一个条件的元素数量（注意不是同时满足上述条件，而是满足任意一个条件的元素数量）</p>
+<p>使用我文氏图表示如下：</p>
+<figure>
+<img src="wenshitu.png" alt="wenshitu" />
+<figcaption aria-hidden="true">wenshitu</figcaption>
+</figure>
+<h1 id="求解方法">求解方法</h1>
+<p><span class="math display">\[
+\begin{aligned}
+\left|\bigcup_{i=1}^{n} f_{i}\right|= &amp;
+\sum_{i}\left|f_{i}\right|-\sum_{i&lt;j}\left|f_{i} \cap
+f_{j}\right|+\sum_{i&lt;j&lt;k}\left|f_{i} \cap f_{j} \cap
+f_{k}\right|-\cdots \\&amp; +(-1)^{m-1}
+\sum_{a_{i}&lt;a_{i+1}}\left|\bigcap_{i=1}^{m}
+f_{a_{i}}\right|+\cdots+(-1)^{n-1}\left|f_{1} \cap \cdots \cap
+f_{n}\right|
+\end{aligned}
+\]</span></p>
+<p>可以看到集合的并是通过集合交集不断的运算得出的。最开始计算满足一个条件的元素数量的和，其中同时满足两个条件的集合数量会被多次计算，需要减去。减去时会多减去一些同时满足三个条件的集合数量....。以上是语言上的证明，现在给出数学上的证明。</p>
+<p>假设元素x满足条件<span
+class="math inline">\(f_1,f_2,f_3...f_{s}\)</span>，分析上述等式。<span
+class="math inline">\(\sum_{i}|f_{i}|\)</span>中x会被计算<span
+class="math inline">\(C_{s}^{1}\)</span>次，<span
+class="math inline">\(-\sum_{i&lt;j}|f_{i} \cap
+f_{j}|\)</span>中x会被计算$ - C_{s}^{2}$, <span
+class="math inline">\(\sum_{i&lt;j&lt;k}|f_{i} \cap f_{j} \cap
+f_{k}|\)</span>中x会被计算<span
+class="math inline">\(C_{s}^{3}\)</span>次，依此类推，求解式中计算次数为</p>
+<p><span class="math display">\[
+\begin{matrix}
+\sum_{i = 1}^{s} (-1)^{i - 1} C_{s}^{i} &amp;=&amp; C_{s}^{0} - \sum_{i
+= 0}^{s} (-1)^{i} C_{s}^{i}
+\\ &amp;=&amp; C_{s}^{0} - (1 - 1) ^ s
+\\ &amp;=&amp; 1
+\end{matrix}
+\]</span> 可见x在集合求解表达式中计算次数为1。</p>
+<h1 id="集合的交如何求解">集合的交如何求解</h1>
+<p>由于交和并可以转化，容斥原理可以通过<span
+class="math inline">\(\bigcap_{i = 1}^{k}f_{i} = U - \bigcup_{i = 1}^{k}
+\bar{f_{i}}\)</span>将交集转化为全集U和条件f非的并集之间的计算，对并集使用容斥原理，即可完成交集的运算。</p>
+<h1 id="参考">参考</h1>
+<p><a
+target="_blank" rel="noopener" href="https://oi-wiki.org/math/combinatorics/inclusion-exclusion-principle/">参考文献</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.jpg" alt="skk1faker 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="skk1faker 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag"># 数学</a>
+              <a href="/tags/acm/" rel="tag"># acm</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/05/08/%E7%AC%AC%E4%BA%8C%E7%B1%BBstirling%E6%95%B0/" rel="prev" title="第二类stirling数">
+                  <i class="fa fa-angle-left"></i> 第二类stirling数
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/05/27/rime%E9%85%8D%E7%BD%AE/" rel="next" title="rime配置">
+                  rime配置 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">skk1faker</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"skk1faker/blog_source","issue_term":"pathname","theme":"github-dark"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
