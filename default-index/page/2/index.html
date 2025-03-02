@@ -281,7 +281,7 @@ target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2006032
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/uojp450%E5%8D%95%E4%BD%8D%E6%A0%B9%E5%8F%8D%E6%BC%94%E4%B8%8E%E4%BC%98%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/steam-linux%E6%95%99%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/acm-icpc.png">
@@ -299,7 +299,7 @@ target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2006032
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/22/uojp450%E5%8D%95%E4%BD%8D%E6%A0%B9%E5%8F%8D%E6%BC%94%E4%B8%8E%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">uojp450单位根反演与优化</a>
+          <a href="/2025/02/22/steam-linux%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">steam_linux教程</a>
         </h2>
 
         <div class="post-meta-container">
@@ -323,308 +323,11 @@ target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2006032
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="欧拉公式">欧拉公式</h1>
-<p><span class="math display">\[
-e^{i\theta} = cos(\theta) + i * sin(\theta)
-\]</span> 上述表达式成立是根据<span
-class="math inline">\(e^{x}\)</span>在0处的泰勒展开得到： <span
-class="math display">\[
-\begin{matrix}
-e^{i\theta} &amp;=&amp; \sum_{j = 0}^{\infty}\frac{(i\theta)^{j}}{j!}\\
-&amp;=&amp; \sum_{j = 0}^{\infty}(-1)^{j}\frac{(\theta)^{2j}}{(2j)!} + i
-* \sum_{j = 0}^{\infty}(-1)^{j}\frac{(\theta)^{2j + 1}}{(2j+1)!}
-\end{matrix}
-\]</span></p>
-<p>在复平面中<span class="math inline">\(e^{i\theta} = cos(\theta) + i *
-sin(\theta)\)</span>可以表示为如下： <img src="fu_ping_mian.png"
-alt="fu_ping_mian" /></p>
-<p>由这个可知单位根可用来左旋转，因为： <span class="math display">\[
-e^{i\beta} * e^{i\theta} = e^{i(\theta + \beta)}
-\]</span></p>
-<p>也能知道单位根<span
-class="math inline">\(w_{n}\)</span>旋转n次为1.</p>
-<h1 id="单位根">单位根</h1>
-<p>单位根是n次幂为1的复数，通常值为<span class="math inline">\(w_{n} =
-e^{\frac{2\pi}{n}i} = cos(\frac{2\pi}{n}) + i *
-sin(\frac{2\pi}{n})\)</span></p>
-<p>观察根据欧拉公式可知，</p>
-<h1 id="单位根反演">单位根反演</h1>
-<p>表达式<span
-class="math inline">\([d|n]\)</span>表示n能否被d整除，如能整除<span
-class="math inline">\([d|n] = 1\)</span>否则<span
-class="math inline">\([d|n] = 0\)</span>，单位根反演是表达式<span
-class="math inline">\([d|n]\)</span>的一种计算方法。</p>
-<p><span class="math display">\[
-\left\{\begin{matrix}
-[d|n] = \frac{1}{d}\sum^{d - 1}_{i = 0}w_{d}^{in} \\
-w_{d}^{i} \ne 1 (i &lt; d)\\
-w_{d}^d = 1
-\end{matrix}\right.
-\]</span></p>
-<p>上述表达式的主要利用等比数列求和得到,可见下方变换。</p>
-<p><span class="math display">\[
-\begin{matrix}
-[d|n] &amp;= \frac{1}{d}\sum^{d - 1}_{i = 0}w_{d}^{in} \\
-    &amp; = \frac{1}{d}\frac{1 - w_{d}^{nd}}{1 - w_{d}^{n}}
-\end{matrix}
-\]</span></p>
-<p>可以看出，<span class="math inline">\(w_{d}^{d} = 1\)</span>且<span
-class="math inline">\(w_{d}^{i} !=
-1\)</span>是上式成立的一个条件。满足这个条件的有两个：</p>
-<ol type="1">
-<li>单位根<span class="math inline">\(w_{d} = sin(\theta) + i *
-cos(\theta)\)</span></li>
-<li>(在一些特殊情况下才成立)在对质数P的模运算中，利用费马小定理可得到：
-<span class="math display">\[
-w_{d} = x^{\frac{P - 1}{d}} mod P
-\]</span></li>
-</ol>
-<p>注意,需要满足(P - 1) % d == 0，同时x值要特殊选取，验证所得<span
-class="math inline">\(w_{d}\)</span>是否满足： <span
-class="math display">\[
-\begin{matrix}
-w_{d}^{i} \ne 1 (i &lt; d)\\
-w_{d}^d = 1
-\end{matrix}
-\]</span></p>
-<h1 id="单位根的应用">单位根的应用</h1>
-<h2 id="与生成函数一起使用">1. 与生成函数一起使用</h2>
-<h3 id="生成函数简介">生成函数简介</h3>
-<p><a
-target="_blank" rel="noopener" href="https://zhouyifan.net/2019/06/25/recurrence-relation-and-generating-function/">生成函数参考</a></p>
-<p>生成函数的目的是为了快速计算常见的一些表达式的和，或者求一些递归关系的通项。例如<span
-class="math inline">\(\frac{n!}{a!(n - a)!}\)</span>一些项的和</p>
-<h4 id="生成函数">生成函数</h4>
-<p>求n个水果的组合方案，满足反感的条件是，“1.
-苹果偶数个，2.橘子最多两个，3.香蕉数量是3的倍数，最多一个梨” <span
-class="math display">\[
-\begin{matrix}
-&amp;&amp;(1 + x^2 + x^4 + ... + x^{2i} + ...)(1 + x + x^2)(1 + x^3 +
-x^6 + ... + x^{3i} + ...)(1 + x)\\
-&amp;=&amp; \frac{1}{1 - x^{2}} \frac{1 - x^{3}}{1 - x}\frac{1}{1 -
-x^{3}}(1+x)\\
-&amp;=&amp; \frac{1}{(1 - x)^{2}} \\
-&amp;=&amp; (x - 1)^{-2}\\
-&amp;=&amp; \sum^{\infty}_{i = 0}C_{-2}^{n}x^(n)(-1)^(n + 2) \\
-&amp;&amp; // 这里既可以用广义二项式定理，也可已使用先积分再求导，求解项
-\\
-&amp;=&amp; \sum_{i = 0}^{\infty}(n + 1)x^{n}
-\end{matrix}
-\]</span></p>
-<p><a
-target="_blank" rel="noopener" href="https://www.cnblogs.com/Asika3912333/p/11406614.html">广义二项式参考</a>
-乘起来后，其中n的幂次前系数就是方案数</p>
-<p>诀窍就在于，用于累积的量作为x的幂次，乘法过程中，相当于把这些方案的部分进行组合。</p>
-<h4 id="指数生成函数">指数生成函数</h4>
-<p>如果偶数个方格被涂成红色以及奇数个方格被涂成白色，试确定用红、白、蓝和绿为1行列棋盘的方格着色的方案数:</p>
-<p>将格子数作为幂次，观察如下表达式： <span class="math display">\[
-(x^{0} + x^{2} + x^{4} + ... + x^{2i} + ...)(x^{1} + x^{3} + x^{5} + ...
-+ x^{2i + 1} + ...)
-\]</span></p>
-<p>对于两项<span class="math inline">\(x^{4} *
-x^{5}\)</span>相乘，其代表了拿出4个红色5个白色图砖块，但是之中没有给出方案上数，这种组合的方案数应为$，理由是先将所有砖视为不同则排列数为9!，4个红砖相同则需要除以4!，5个白砖相同除以5!。所以通过改动如下表达式可以得到最终目标。</p>
-<p><span class="math display">\[
-\begin{matrix}
-&amp;&amp;n!(x^{0} + \frac{x^{2}}{2!} + \frac{x^{4}}{4!} + ... +
-\frac{x^{2i}}{(2i)!} + ...)(x^{1} + \frac{x^{3}}{3!}+ \frac{x^{5}}{5!} +
-... + \frac{x^{2i + 1}}{(2i + 1)!} + ...)\\
-&amp;=&amp; n!(\frac{e^{x} + e^{-x}}{2})(\frac{e^{x} - e ^ {-x}}{2})\\
-&amp;=&amp; n!(\frac{e^{2x} - e^{-2x}}{4})
-\end{matrix}
-\]</span> 这样得到<span
-class="math inline">\(x^{n}\)</span>前的系数就是我们要求的目标答案</p>
-<h3 id="应用uojp450">应用uojp450</h3>
-<p>题意 ：
-共k个复读机，n个复读机会，每个复读机复读次数是d的倍数有多少中方案,
-其中d的范围为[1-3]，答案对19491001取模。</p>
-<p>可以知道生成函数如下： <span class="math inline">\(n!((x^{0} + x^{d}
-/ d! + \frac{x^{2d}}{2d!} + ... ) ^ k)\)</span>中<span
-class="math inline">\(x^{n}\)</span>前面的系数就是答案。为了求表达式，可以使用单位根反演。</p>
-<p><span class="math display">\[
-\begin{matrix}
-&amp;&amp;n!((x^{0} + \frac{x^{d}}{d!} + \frac{x^{2d}}{2d!} + ... ) ^ k)
-\\
-&amp;=&amp; n!(\sum_{i = 0}^{\infty}(\frac{x^{i}}{i!})[d|i]) \\
-&amp;=&amp; n!(\sum_{i = 0}^{\infty}(\frac{x^{i}}{i!})\frac{1}{d}\sum_{j
-= 0}^{d - 1}w_{d}^{ij}) \\
-&amp;=&amp; n!(\sum_{j = 0}^{d - 1}\sum_{i =
-0}^{\infty}(\frac{(xw_{d}^{j})^{i}}{i!})) \\
-&amp;=&amp; \frac{n!}{d}(\sum_{j = 0}^{d - 1}e^{w_{d}^{j}x}) \\
-\end{matrix}
-\]</span> 随后使用泰勒展开求系数即可, 在模运算下，<span
-class="math inline">\(w_d\)</span>可以不用复数，而使用取模意义下的单位根反演</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2024 Wang XinPeng. All rights reserved.</span></span><br><span class="line"><span class="comment">*   </span></span><br><span class="line"><span class="comment">*   filename:     uojp450.cpp</span></span><br><span class="line"><span class="comment">*   username:     skt1faker</span></span><br><span class="line"><span class="comment">*   create time:  11:52  2024.11.10</span></span><br><span class="line"><span class="comment">*   modify time:  11:52  2024.11.10</span></span><br><span class="line"><span class="comment">*   email:        skk1faker@163.com</span></span><br><span class="line"><span class="comment">*   descripe:     </span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> lll __int128</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEBUG0</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod1 = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod2 = <span class="number">19491001</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> maxx = <span class="number">5e5</span> + <span class="number">10</span>;</span><br><span class="line">ll p[maxx];</span><br><span class="line"><span class="function"><span class="type">long</span> <span class="type">long</span> <span class="title">powd</span><span class="params">(ll a,ll b)</span></span>&#123;</span><br><span class="line">	ll ans = <span class="number">1</span>;</span><br><span class="line">	ll temp = a % mod2;</span><br><span class="line">	<span class="keyword">while</span>(b)&#123;</span><br><span class="line">		<span class="keyword">if</span>(b &amp;<span class="number">1</span>)&#123;</span><br><span class="line">				ans = (ans * temp)% mod2;</span><br><span class="line">		&#125;</span><br><span class="line">		temp = (temp * temp) % mod2;</span><br><span class="line">		b/=<span class="number">2</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	p[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt; maxx;i++)&#123;</span><br><span class="line">		p[i] = (p[i -  <span class="number">1</span>] * i ) % mod2;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">C</span><span class="params">(ll n,ll a,ll b = <span class="number">0</span>)</span></span>&#123;</span><br><span class="line">	ll ans = p[n];</span><br><span class="line">	<span class="comment">//p[n]/p[a]*p[b]*p[n - a - b];</span></span><br><span class="line">	ans =(ans * <span class="built_in">powd</span>(p[a],mod2 - <span class="number">2</span>)) % mod2;</span><br><span class="line">	ans =(ans * <span class="built_in">powd</span>(p[b],mod2 - <span class="number">2</span>)) % mod2;</span><br><span class="line">	ans =(ans * <span class="built_in">powd</span>(p[n - a - b],mod2 - <span class="number">2</span>)) % mod2;</span><br><span class="line">	<span class="comment">//printf(&quot;C(%lld %lld %lld) = %lld\n&quot;, n,a,b,ans);</span></span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">init</span>();</span><br><span class="line">	ll n,k,d;			<span class="comment">// n, k个复读机，d次</span></span><br><span class="line">	ll ans = <span class="number">0</span>;</span><br><span class="line">	cin&gt;&gt;n&gt;&gt;k&gt;&gt;d;</span><br><span class="line">	<span class="keyword">if</span>(d == <span class="number">1</span>)&#123;</span><br><span class="line">		ans = <span class="built_in">powd</span>(k,n);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(d == <span class="number">2</span>)&#123;</span><br><span class="line">		ll d2 = <span class="built_in">powd</span>(<span class="built_in">powd</span>(<span class="number">2</span>,k), mod2 - <span class="number">2</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt;= k;i++)&#123;</span><br><span class="line">			ans = (ans + <span class="built_in">C</span>(k,i) * <span class="built_in">powd</span>((<span class="number">2</span> * i - k + mod2) % mod2 ,n)) % mod2;</span><br><span class="line">		&#125;</span><br><span class="line">		ans = (ans * d2) % mod2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		ll d3 = <span class="built_in">powd</span>(<span class="built_in">powd</span>(<span class="number">3</span>,k), mod2 - <span class="number">2</span>),w = <span class="built_in">powd</span>(<span class="number">3</span>,(mod2 - <span class="number">1</span>) / <span class="number">3</span>);</span><br><span class="line">		cout&lt;&lt;(w * w % mod2)&lt;&lt;endl;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt;= k;i++)&#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt;= k - i;j++)&#123;</span><br><span class="line">				ans = (ans + (<span class="built_in">C</span>(k,i, j) * <span class="built_in">powd</span>((i + (w * j) % mod2 + ((((w * w) % mod2) * (k - i - j)) % mod2))%mod2,n) ) % mod2) % mod2;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		ans = (ans * d3) % mod2;</span><br><span class="line">	&#125;</span><br><span class="line">	cout &lt;&lt; ans &lt;&lt;endl;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/yolo-quant/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/acm-icpc.png">
-      <meta itemprop="name" content="skk1faker">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="skk1faker 笔记">
-      <meta itemprop="description" content="登峰造极">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | skk1faker 笔记">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/22/yolo-quant/" class="post-title-link" itemprop="url">yolo_quant</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="试验环境">试验环境</h2>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">alias quant_=&quot;cd /data_160TB/2018/songzhengxi/haha/test/dt_mqbench_test;conda activate o&quot;</span><br><span class="line">alias yolo_=&quot;cd /data_160TB/2018/songzhengxi/haha/test/yolov5_example;conda activate o&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="yolo">yolo</h2>
-<h2 id="quant">quant</h2>
-<h2 id="实验结果">实验结果</h2>
-<h3 id="代码">代码</h3>
-<ol type="1">
-<li>给出训练曲线 -- 0%</li>
-<li>给出量化位数情况 -- 0%</li>
-<li>给出量化模型保存方案 -- 0%</li>
-<li>统计模型大小 -- 0%</li>
-</ol>
-<h3 id="实验">实验</h3>
-<ol type="1">
-<li>与其他量化方法进行对比</li>
-<li>本方法做一个消融实验</li>
-<li></li>
-</ol>
-<h3 id="参考资料">参考资料</h3>
-<p>https://datawhalechina.github.io/dive-into-cv-pytorch/#/chapter03_object_detection_introduction/3_4
-https://start.oneflow.org/oneflow-yolo-doc/tutorials/01_chapter/yolov5_network_structure_analysis.html</p>
-<h3 id="目标检测基本流程">目标检测基本流程</h3>
-<ol type="1">
-<li>训练过程</li>
-</ol>
-<p>将图片分成多个锚框，锚框在图片中的比例 + 不同的长宽比 +
-不同中心点的位置构成了生成锚框的三个要素。如果将目标检测比作做选择题，那么锚框就是选择题的选项，他是一个粗略的备选答案。</p>
-<ol type="1">
-<li>当前训练中exp35最为优质</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/%E5%8C%BA%E9%97%B4dp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/acm-icpc.png">
-      <meta itemprop="name" content="skk1faker">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="skk1faker 笔记">
-      <meta itemprop="description" content="登峰造极">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | skk1faker 笔记">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/22/%E5%8C%BA%E9%97%B4dp/" class="post-title-link" itemprop="url">区间dp</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ol type="1">
-<li><p>区间dp涉及到环应该怎么处理</p></li>
-<li><p>dp中多元组</p></li>
-<li><p>四边形不等式</p></li>
-</ol>
+          <h3 id="如何在linux上玩windows的游戏">如何在linux上玩windows的游戏</h3>
+<p>打开设置， 首先在“interface”一栏中找到“client Beta
+participation”，选择steam Beta update， 这个是steam的wine分支<br />
+然后在“compatibility”中找到“enable Steam play for all other
+title”,这样可以玩其他平台的游戏了</p>
 
       
     </div>
@@ -860,6 +563,177 @@ target="_blank" rel="noopener" href="https://aircrack-ng.org/install.html">安�
 <h1 id="命令行连接wifi">命令行连接wifi</h1>
 <p><a
 target="_blank" rel="noopener" href="https://blog.csdn.net/kdongyi/article/details/84557708">参考</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/yolo-quant/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/22/yolo-quant/" class="post-title-link" itemprop="url">yolo_quant</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="试验环境">试验环境</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">alias quant_=&quot;cd /data_160TB/2018/songzhengxi/haha/test/dt_mqbench_test;conda activate o&quot;</span><br><span class="line">alias yolo_=&quot;cd /data_160TB/2018/songzhengxi/haha/test/yolov5_example;conda activate o&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="yolo">yolo</h2>
+<h2 id="quant">quant</h2>
+<h2 id="实验结果">实验结果</h2>
+<h3 id="代码">代码</h3>
+<ol type="1">
+<li>给出训练曲线 -- 0%</li>
+<li>给出量化位数情况 -- 0%</li>
+<li>给出量化模型保存方案 -- 0%</li>
+<li>统计模型大小 -- 0%</li>
+</ol>
+<h3 id="实验">实验</h3>
+<ol type="1">
+<li>与其他量化方法进行对比</li>
+<li>本方法做一个消融实验</li>
+<li></li>
+</ol>
+<h3 id="参考资料">参考资料</h3>
+<p>https://datawhalechina.github.io/dive-into-cv-pytorch/#/chapter03_object_detection_introduction/3_4
+https://start.oneflow.org/oneflow-yolo-doc/tutorials/01_chapter/yolov5_network_structure_analysis.html</p>
+<h3 id="目标检测基本流程">目标检测基本流程</h3>
+<ol type="1">
+<li>训练过程</li>
+</ol>
+<p>将图片分成多个锚框，锚框在图片中的比例 + 不同的长宽比 +
+不同中心点的位置构成了生成锚框的三个要素。如果将目标检测比作做选择题，那么锚框就是选择题的选项，他是一个粗略的备选答案。</p>
+<ol type="1">
+<li>当前训练中exp35最为优质</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/%E5%8C%BA%E9%97%B4dp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/22/%E5%8C%BA%E9%97%B4dp/" class="post-title-link" itemprop="url">区间dp</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ol type="1">
+<li><p>区间dp涉及到环应该怎么处理</p></li>
+<li><p>dp中多元组</p></li>
+<li><p>四边形不等式</p></li>
+</ol>
 
       
     </div>
@@ -1237,7 +1111,7 @@ target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/linux-cronta
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/cf1979Manhattan-Triangle/">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/arduino/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/acm-icpc.png">
@@ -1255,7 +1129,7 @@ target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/linux-cronta
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/22/cf1979Manhattan-Triangle/" class="post-title-link" itemprop="url">cf1979Manhattan_Triangle</a>
+          <a href="/2025/02/22/arduino/" class="post-title-link" itemprop="url">arduino</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1279,7 +1153,12 @@ target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/linux-cronta
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <h1 id="arduino连接蓝牙">arduino连接蓝牙</h1>
+<p><a
+target="_blank" rel="noopener" href="https://arduino.nxez.com/2018/04/19/arduino-uses-hc05-bluetooth-module-to-connect-the-phone.html">蓝牙连接</a></p>
+<h1 id="lilygo开发">lilygo开发</h1>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/Xinyuan-LilyGO/LilyGo-Document/tree/master?tab=readme-ov-file">github地址</a></p>
 
       
     </div>

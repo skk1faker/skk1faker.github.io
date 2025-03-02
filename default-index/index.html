@@ -198,6 +198,205 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/03/02/uojp450%E5%8D%95%E4%BD%8D%E6%A0%B9%E5%8F%8D%E6%BC%94%E4%B8%8E%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/03/02/uojp450%E5%8D%95%E4%BD%8D%E6%A0%B9%E5%8F%8D%E6%BC%94%E4%B8%8E%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">uojp450单位根反演与优化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-03-02 12:26:51" itemprop="dateCreated datePublished" datetime="2025-03-02T12:26:51+08:00">2025-03-02</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="欧拉公式">欧拉公式</h1>
+<p><span class="math display">\[
+e^{i\theta} = cos(\theta) + i * sin(\theta)
+\]</span> 上述表达式成立是根据<span
+class="math inline">\(e^{x}\)</span>在0处的泰勒展开得到： <span
+class="math display">\[
+\begin{matrix}
+e^{i\theta} &amp;=&amp; \sum_{j = 0}^{\infty}\frac{(i\theta)^{j}}{j!}\\
+&amp;=&amp; \sum_{j = 0}^{\infty}(-1)^{j}\frac{(\theta)^{2j}}{(2j)!} + i
+* \sum_{j = 0}^{\infty}(-1)^{j}\frac{(\theta)^{2j + 1}}{(2j+1)!}
+\end{matrix}
+\]</span></p>
+<p>在复平面中<span class="math inline">\(e^{i\theta} = cos(\theta) + i *
+sin(\theta)\)</span>可以表示为如下： <img src="fu_ping_mian.png"
+alt="fu_ping_mian" /></p>
+<p>由这个可知单位根可用来左旋转，因为： <span class="math display">\[
+e^{i\beta} * e^{i\theta} = e^{i(\theta + \beta)}
+\]</span></p>
+<p>也能知道单位根<span
+class="math inline">\(w_{n}\)</span>旋转n次为1.</p>
+<h1 id="单位根">单位根</h1>
+<p>单位根是n次幂为1的复数，通常值为<span class="math inline">\(w_{n} =
+e^{\frac{2\pi}{n}i} = cos(\frac{2\pi}{n}) + i *
+sin(\frac{2\pi}{n})\)</span></p>
+<p>观察根据欧拉公式可知，</p>
+<h1 id="单位根反演">单位根反演</h1>
+<p>表达式<span
+class="math inline">\([d|n]\)</span>表示n能否被d整除，如能整除<span
+class="math inline">\([d|n] = 1\)</span>否则<span
+class="math inline">\([d|n] = 0\)</span>，单位根反演是表达式<span
+class="math inline">\([d|n]\)</span>的一种计算方法。</p>
+<p><span class="math display">\[
+\left\{\begin{matrix}
+[d|n] = \frac{1}{d}\sum^{d - 1}_{i = 0}w_{d}^{in} \\
+w_{d}^{i} \ne 1 (i &lt; d)\\
+w_{d}^d = 1
+\end{matrix}\right.
+\]</span></p>
+<p>上述表达式的主要利用等比数列求和得到,可见下方变换。</p>
+<p><span class="math display">\[
+\begin{matrix}
+[d|n] &amp;= \frac{1}{d}\sum^{d - 1}_{i = 0}w_{d}^{in} \\
+    &amp; = \frac{1}{d}\frac{1 - w_{d}^{nd}}{1 - w_{d}^{n}}
+\end{matrix}
+\]</span></p>
+<p>可以看出，<span class="math inline">\(w_{d}^{d} = 1\)</span>且<span
+class="math inline">\(w_{d}^{i} !=
+1\)</span>是上式成立的一个条件。满足这个条件的有两个：</p>
+<ol type="1">
+<li>单位根<span class="math inline">\(w_{d} = sin(\theta) + i *
+cos(\theta)\)</span></li>
+<li>(在一些特殊情况下才成立)在对质数P的模运算中，利用费马小定理可得到：
+<span class="math display">\[
+w_{d} = x^{\frac{P - 1}{d}} mod P
+\]</span></li>
+</ol>
+<p>注意,需要满足(P - 1) % d == 0，同时x值要特殊选取，验证所得<span
+class="math inline">\(w_{d}\)</span>是否满足： <span
+class="math display">\[
+\begin{matrix}
+w_{d}^{i} \ne 1 (i &lt; d)\\
+w_{d}^d = 1
+\end{matrix}
+\]</span></p>
+<h1 id="单位根的应用">单位根的应用</h1>
+<h2 id="与生成函数一起使用">1. 与生成函数一起使用</h2>
+<h3 id="生成函数简介">生成函数简介</h3>
+<p><a
+target="_blank" rel="noopener" href="https://zhouyifan.net/2019/06/25/recurrence-relation-and-generating-function/">生成函数参考</a></p>
+<p>生成函数的目的是为了快速计算常见的一些表达式的和，或者求一些递归关系的通项。例如<span
+class="math inline">\(\frac{n!}{a!(n - a)!}\)</span>一些项的和</p>
+<h4 id="生成函数">生成函数</h4>
+<p>求n个水果的组合方案，满足反感的条件是，“1.
+苹果偶数个，2.橘子最多两个，3.香蕉数量是3的倍数，最多一个梨”</p>
+<p><span class="math display">\[
+\begin{matrix}
+&amp;&amp;(1 + x^2 + x^4 + ... + x^{2i} + ...)(1 + x + x^2)(1 + x^3 +
+x^6 + ... + x^{3i} + ...)(1 + x)\\
+&amp;=&amp; \frac{1}{1 - x^{2}} \frac{1 - x^{3}}{1 - x}\frac{1}{1 -
+x^{3}}(1+x)\\
+&amp;=&amp; \frac{1}{(1 - x)^{2}} \\
+&amp;=&amp; (x - 1)^{-2}\\
+&amp;=&amp; \sum^{\infty}_{i = 0}C_{-2}^{n}x^(n)(-1)^(n + 2) \\
+&amp;&amp; // 这里既可以用广义二项式定理，也可已使用先积分再求导，求解项
+\\
+&amp;=&amp; \sum_{i = 0}^{\infty}(n + 1)x^{n}
+\end{matrix}
+\]</span></p>
+<p><a
+target="_blank" rel="noopener" href="https://www.cnblogs.com/Asika3912333/p/11406614.html">广义二项式参考</a>
+乘起来后，其中n的幂次前系数就是方案数</p>
+<p>诀窍就在于，用于累积的量作为x的幂次，乘法过程中，相当于把这些方案的部分进行组合。</p>
+<h4 id="指数生成函数">指数生成函数</h4>
+<p>如果偶数个方格被涂成红色以及奇数个方格被涂成白色，试确定用红、白、蓝和绿为1行列棋盘的方格着色的方案数:</p>
+<p>将格子数作为幂次，观察如下表达式： <span class="math display">\[
+(x^{0} + x^{2} + x^{4} + ... + x^{2i} + ...)(x^{1} + x^{3} + x^{5} + ...
++ x^{2i + 1} + ...)
+\]</span></p>
+<p>对于两项<span class="math inline">\(x^{4} *
+x^{5}\)</span>相乘，其代表了拿出4个红色5个白色图砖块，但是之中没有给出方案上数，这种组合的方案数应为$，理由是先将所有砖视为不同则排列数为9!，4个红砖相同则需要除以4!，5个白砖相同除以5!。所以通过改动如下表达式可以得到最终目标。</p>
+<p><span class="math display">\[
+\begin{matrix}
+&amp;&amp;n!(x^{0} + \frac{x^{2}}{2!} + \frac{x^{4}}{4!} + ... +
+\frac{x^{2i}}{(2i)!} + ...)(x^{1} + \frac{x^{3}}{3!}+ \frac{x^{5}}{5!} +
+... + \frac{x^{2i + 1}}{(2i + 1)!} + ...)\\
+&amp;=&amp; n!(\frac{e^{x} + e^{-x}}{2})(\frac{e^{x} - e ^ {-x}}{2})\\
+&amp;=&amp; n!(\frac{e^{2x} - e^{-2x}}{4})
+\end{matrix}
+\]</span> 这样得到<span
+class="math inline">\(x^{n}\)</span>前的系数就是我们要求的目标答案</p>
+<h3 id="应用uojp450">应用uojp450</h3>
+<p>题意 ：
+共k个复读机，n个复读机会，每个复读机复读次数是d的倍数有多少中方案,
+其中d的范围为[1-3]，答案对19491001取模。</p>
+<p>可以知道生成函数如下： <span class="math inline">\(n!((x^{0} + x^{d}
+/ d! + \frac{x^{2d}}{2d!} + ... ) ^ k)\)</span>中<span
+class="math inline">\(x^{n}\)</span>前面的系数就是答案。为了求表达式，可以使用单位根反演。</p>
+<p><span class="math display">\[
+\begin{matrix}
+&amp;&amp;n!((x^{0} + \frac{x^{d}}{d!} + \frac{x^{2d}}{2d!} + ... ) ^ k)
+\\
+&amp;=&amp; n!(\sum_{i = 0}^{\infty}(\frac{x^{i}}{i!})[d|i]) \\
+&amp;=&amp; n!(\sum_{i = 0}^{\infty}(\frac{x^{i}}{i!})\frac{1}{d}\sum_{j
+= 0}^{d - 1}w_{d}^{ij}) \\
+&amp;=&amp; n!(\sum_{j = 0}^{d - 1}\sum_{i =
+0}^{\infty}(\frac{(xw_{d}^{j})^{i}}{i!})) \\
+&amp;=&amp; \frac{n!}{d}(\sum_{j = 0}^{d - 1}e^{w_{d}^{j}x}) \\
+\end{matrix}
+\]</span> 随后使用泰勒展开求系数即可, 在模运算下，<span
+class="math inline">\(w_d\)</span>可以不用复数，而使用取模意义下的单位根反演</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2024 Wang XinPeng. All rights reserved.</span></span><br><span class="line"><span class="comment">*   </span></span><br><span class="line"><span class="comment">*   filename:     uojp450.cpp</span></span><br><span class="line"><span class="comment">*   username:     skt1faker</span></span><br><span class="line"><span class="comment">*   create time:  11:52  2024.11.10</span></span><br><span class="line"><span class="comment">*   modify time:  11:52  2024.11.10</span></span><br><span class="line"><span class="comment">*   email:        skk1faker@163.com</span></span><br><span class="line"><span class="comment">*   descripe:     </span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> lll __int128</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEBUG0</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod1 = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod2 = <span class="number">19491001</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> maxx = <span class="number">5e5</span> + <span class="number">10</span>;</span><br><span class="line">ll p[maxx];</span><br><span class="line"><span class="function"><span class="type">long</span> <span class="type">long</span> <span class="title">powd</span><span class="params">(ll a,ll b)</span></span>&#123;</span><br><span class="line">	ll ans = <span class="number">1</span>;</span><br><span class="line">	ll temp = a % mod2;</span><br><span class="line">	<span class="keyword">while</span>(b)&#123;</span><br><span class="line">		<span class="keyword">if</span>(b &amp;<span class="number">1</span>)&#123;</span><br><span class="line">				ans = (ans * temp)% mod2;</span><br><span class="line">		&#125;</span><br><span class="line">		temp = (temp * temp) % mod2;</span><br><span class="line">		b/=<span class="number">2</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	p[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt; maxx;i++)&#123;</span><br><span class="line">		p[i] = (p[i -  <span class="number">1</span>] * i ) % mod2;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">ll <span class="title">C</span><span class="params">(ll n,ll a,ll b = <span class="number">0</span>)</span></span>&#123;</span><br><span class="line">	ll ans = p[n];</span><br><span class="line">	<span class="comment">//p[n]/p[a]*p[b]*p[n - a - b];</span></span><br><span class="line">	ans =(ans * <span class="built_in">powd</span>(p[a],mod2 - <span class="number">2</span>)) % mod2;</span><br><span class="line">	ans =(ans * <span class="built_in">powd</span>(p[b],mod2 - <span class="number">2</span>)) % mod2;</span><br><span class="line">	ans =(ans * <span class="built_in">powd</span>(p[n - a - b],mod2 - <span class="number">2</span>)) % mod2;</span><br><span class="line">	<span class="comment">//printf(&quot;C(%lld %lld %lld) = %lld\n&quot;, n,a,b,ans);</span></span><br><span class="line">	<span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">init</span>();</span><br><span class="line">	ll n,k,d;			<span class="comment">// n, k个复读机，d次</span></span><br><span class="line">	ll ans = <span class="number">0</span>;</span><br><span class="line">	cin&gt;&gt;n&gt;&gt;k&gt;&gt;d;</span><br><span class="line">	<span class="keyword">if</span>(d == <span class="number">1</span>)&#123;</span><br><span class="line">		ans = <span class="built_in">powd</span>(k,n);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(d == <span class="number">2</span>)&#123;</span><br><span class="line">		ll d2 = <span class="built_in">powd</span>(<span class="built_in">powd</span>(<span class="number">2</span>,k), mod2 - <span class="number">2</span>);</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt;= k;i++)&#123;</span><br><span class="line">			ans = (ans + <span class="built_in">C</span>(k,i) * <span class="built_in">powd</span>((<span class="number">2</span> * i - k + mod2) % mod2 ,n)) % mod2;</span><br><span class="line">		&#125;</span><br><span class="line">		ans = (ans * d2) % mod2;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		ll d3 = <span class="built_in">powd</span>(<span class="built_in">powd</span>(<span class="number">3</span>,k), mod2 - <span class="number">2</span>),w = <span class="built_in">powd</span>(<span class="number">3</span>,(mod2 - <span class="number">1</span>) / <span class="number">3</span>);</span><br><span class="line">		cout&lt;&lt;(w * w % mod2)&lt;&lt;endl;</span><br><span class="line">		<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i &lt;= k;i++)&#123;</span><br><span class="line">			<span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>;j &lt;= k - i;j++)&#123;</span><br><span class="line">				ans = (ans + (<span class="built_in">C</span>(k,i, j) * <span class="built_in">powd</span>((i + (w * j) % mod2 + ((((w * w) % mod2) * (k - i - j)) % mod2))%mod2,n) ) % mod2) % mod2;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		ans = (ans * d3) % mod2;</span><br><span class="line">	&#125;</span><br><span class="line">	cout &lt;&lt; ans &lt;&lt;endl;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/28/dp%E7%8A%B6%E6%80%81%E7%9A%84%E7%A1%AE%E5%AE%9A/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -536,6 +735,155 @@ class="math inline">\((\prod_{i = l}^{r}a_{i})mod\ k\)</span></p>
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/%E6%A0%91%E5%BD%A2%E8%83%8C%E5%8C%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/22/%E6%A0%91%E5%BD%A2%E8%83%8C%E5%8C%85/" class="post-title-link" itemprop="url">树形背包</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/%E6%8D%A2%E6%A0%B9dp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/acm-icpc.png">
+      <meta itemprop="name" content="skk1faker">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="skk1faker 笔记">
+      <meta itemprop="description" content="登峰造极">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | skk1faker 笔记">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/02/22/%E6%8D%A2%E6%A0%B9dp/" class="post-title-link" itemprop="url">换根dp</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="换根dp">换根dp</h1>
+<p>换根dp的基本思路是</p>
+<ol type="1">
+<li>先计算一棵树中所有节点的dp值。</li>
+<li>将根节点a附近的节点b重新视为根，此时只有ab节点的父子关系发生了变化，其他节点的关系并不改变，依赖于父子关系的dp值只需要改变ab节点处的dp值
+2.1
+现将父节点a与子节点b断开，改变相应的dp值，即改变父节点a的dp值，将b的贡献去掉。
+2.2 将b节点的值加上节点a的贡献，得到新的dp值，完成换根过程。</li>
+<li>利用dfs过程从跟开始，不断进行换根，每次换根时间为<code>O(1)</code>，换根过程先记录原根节点与即将变换的根节点dp值，然后变换，变换后经过dfs过程后应将dp值恢复，使得下一次换根过程正确计算，可看下述代码的dfs2过程。</li>
+</ol>
+<p>以下为luogu的p3647连珠线</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2024 Wang XinPeng. All rights reserved.</span></span><br><span class="line"><span class="comment">*   </span></span><br><span class="line"><span class="comment">*   filename:     p3647.cpp</span></span><br><span class="line"><span class="comment">*   username:     skt1faker</span></span><br><span class="line"><span class="comment">*   create time:  11:06  2024.05.04</span></span><br><span class="line"><span class="comment">*   modify time:  11:06  2024.05.04</span></span><br><span class="line"><span class="comment">*   email:        skk1faker@163.com</span></span><br><span class="line"><span class="comment">*   descripe:     </span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> lll __int128</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEBUG0</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod1 = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod2 = <span class="number">998244353</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> maxn = <span class="number">400011</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Edge</span>&#123;</span><br><span class="line">  <span class="type">int</span> length;</span><br><span class="line">  <span class="type">int</span> to;</span><br><span class="line">  <span class="type">int</span> next;</span><br><span class="line">&#125;;</span><br><span class="line">ll dp[<span class="number">2</span>][maxn],head[maxn],now_edge_num,f[maxn][<span class="number">2</span>];</span><br><span class="line">Edge e[maxn &lt;&lt; <span class="number">1</span>];</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add_edge</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> b,<span class="type">int</span> c)</span></span>&#123;</span><br><span class="line">  e[now_edge_num].length = c;</span><br><span class="line">  e[now_edge_num].to = b;</span><br><span class="line">  e[now_edge_num].next = head[a];</span><br><span class="line">  head[a] = now_edge_num++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">  <span class="built_in">memset</span>(dp,<span class="number">-1</span>,<span class="built_in">sizeof</span>(dp));</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">    f[i][<span class="number">0</span>] = <span class="number">-2e16</span>;</span><br><span class="line">    f[i][<span class="number">1</span>] = <span class="number">-2e16</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> status,<span class="type">int</span> now_posi,<span class="type">int</span> fa)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_max</span><span class="params">(<span class="type">int</span> edge_id,<span class="type">int</span> now_posi)</span></span>&#123;</span><br><span class="line">  <span class="type">int</span> num = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = head[e[edge_id].to];i != <span class="number">-1</span>;i = e[i].next)&#123;</span><br><span class="line">    num++;</span><br><span class="line">    <span class="keyword">if</span>(num &gt; <span class="number">1</span>)<span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(num == <span class="number">1</span>)&#123;</span><br><span class="line">    dp[<span class="number">0</span>][e[edge_id].to] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">max</span>(<span class="built_in">dfs</span>(<span class="number">0</span>,e[edge_id].to,now_posi), <span class="built_in">dfs</span>(<span class="number">1</span>,e[edge_id].to,now_posi) + e[edge_id].length);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> status,<span class="type">int</span> now_posi,<span class="type">int</span> fa)</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(dp[status][now_posi] &gt;= <span class="number">0</span>)<span class="keyword">return</span> dp[status][now_posi];</span><br><span class="line">  dp[status][now_posi] = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span>(status == <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = head[now_posi];i != <span class="number">-1</span> ;i = e[i].next)&#123;</span><br><span class="line">      <span class="keyword">if</span>(e[i].to == fa)<span class="keyword">continue</span>;</span><br><span class="line">      dp[status][now_posi] += <span class="built_in">get_max</span>(i,now_posi);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="type">int</span> flag = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> length = <span class="number">0</span>; <span class="comment">// <span class="doctag">TODO:</span>可能值会更小</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = head[now_posi];i != <span class="number">-1</span> ;i = e[i].next)&#123;</span><br><span class="line">      <span class="type">int</span> next_posi = e[i].to;</span><br><span class="line">      <span class="keyword">if</span>(next_posi == fa)<span class="keyword">continue</span>;</span><br><span class="line">      <span class="keyword">if</span>(flag)&#123;</span><br><span class="line">        <span class="keyword">if</span>(length &lt;= e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi))&#123;</span><br><span class="line">          length = <span class="built_in">max</span>(length,e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi));</span><br><span class="line">          f[now_posi][<span class="number">1</span>] = f[now_posi][<span class="number">0</span>];</span><br><span class="line">          f[now_posi][<span class="number">0</span>] = length;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(f[now_posi][<span class="number">1</span>] &lt; e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi))&#123;</span><br><span class="line">          f[now_posi][<span class="number">1</span>] = e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span> &#123;</span><br><span class="line">        length = e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi);</span><br><span class="line">        f[now_posi][<span class="number">1</span>] = f[now_posi][<span class="number">0</span>];</span><br><span class="line">        f[now_posi][<span class="number">0</span>] = length;</span><br><span class="line">        flag = <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dp[status][now_posi] = <span class="built_in">dfs</span>(<span class="number">0</span>,now_posi,fa) + length;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dp[status][now_posi];</span><br><span class="line">&#125;</span><br><span class="line">ll ans;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">dfs2</span><span class="params">(<span class="type">int</span> now_posi,<span class="type">int</span> fa,<span class="type">int</span> edge_id)</span></span>&#123;</span><br><span class="line">  <span class="comment">// 换根过程</span></span><br><span class="line">  <span class="type">int</span> temp[<span class="number">8</span>];</span><br><span class="line">  <span class="keyword">if</span>(fa != <span class="number">-1</span>)&#123;</span><br><span class="line">    temp[<span class="number">0</span>] = dp[<span class="number">0</span>][fa];</span><br><span class="line">    temp[<span class="number">1</span>] = dp[<span class="number">1</span>][fa];</span><br><span class="line">    temp[<span class="number">2</span>] = dp[<span class="number">0</span>][now_posi];</span><br><span class="line">    temp[<span class="number">3</span>] = dp[<span class="number">1</span>][now_posi];</span><br><span class="line">    temp[<span class="number">4</span>] = f[fa][<span class="number">0</span>];</span><br><span class="line">    temp[<span class="number">5</span>] = f[fa][<span class="number">1</span>];</span><br><span class="line">    temp[<span class="number">6</span>] = f[now_posi][<span class="number">0</span>];</span><br><span class="line">    temp[<span class="number">7</span>] = f[now_posi][<span class="number">1</span>];</span><br><span class="line">    <span class="type">int</span> length;</span><br><span class="line">    </span><br><span class="line">    dp[<span class="number">0</span>][fa] -= <span class="built_in">get_max</span>(edge_id,fa);</span><br><span class="line">    <span class="keyword">if</span>(f[fa][<span class="number">0</span>] == e[edge_id].length + dp[<span class="number">0</span>][now_posi] - <span class="built_in">get_max</span>(edge_id,fa))&#123;   <span class="comment">// 只能使用次大</span></span><br><span class="line">      dp[<span class="number">1</span>][fa] = dp[<span class="number">0</span>][fa] + f[fa][<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      dp[<span class="number">1</span>][fa] =  dp[<span class="number">0</span>][fa] + f[fa][<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    dp[<span class="number">0</span>][now_posi] += <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>,now_posi);</span><br><span class="line">    <span class="keyword">if</span>(f[now_posi][<span class="number">0</span>] &lt;= e[edge_id ^ <span class="number">1</span>].length + dp[<span class="number">0</span>][fa] - <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>, now_posi))&#123;</span><br><span class="line">      f[now_posi][<span class="number">1</span>] = f[now_posi][<span class="number">0</span>];</span><br><span class="line">      f[now_posi][<span class="number">0</span>] = e[edge_id ^ <span class="number">1</span>].length + dp[<span class="number">0</span>][fa] - <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>, now_posi);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(f[now_posi][<span class="number">1</span>] &lt;= e[edge_id ^ <span class="number">1</span>].length + dp[<span class="number">0</span>][fa] - <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>, now_posi))&#123;</span><br><span class="line">      f[now_posi][<span class="number">1</span>] = e[edge_id ^ <span class="number">1</span>].length + dp[<span class="number">0</span>][fa] - <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>, now_posi);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  ans = <span class="built_in">max</span>(ans,dp[<span class="number">0</span>][now_posi]);</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = head[now_posi]; i != <span class="number">-1</span>;i = e[i].next)&#123;    <span class="comment">// </span></span><br><span class="line">    <span class="keyword">if</span>(e[i].to == fa)<span class="keyword">continue</span>;</span><br><span class="line">    <span class="built_in">dfs2</span>(e[i].to,now_posi,i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(fa != <span class="number">-1</span>)&#123;</span><br><span class="line">    dp[<span class="number">0</span>][fa] = temp[<span class="number">0</span>];</span><br><span class="line">    dp[<span class="number">1</span>][fa] = temp[<span class="number">1</span>];</span><br><span class="line">    dp[<span class="number">0</span>][now_posi] = temp[<span class="number">2</span>];</span><br><span class="line">    dp[<span class="number">1</span>][now_posi] = temp[<span class="number">3</span>];</span><br><span class="line">    f[fa][<span class="number">0</span>] = temp[<span class="number">4</span>];</span><br><span class="line">    f[fa][<span class="number">1</span>] = temp[<span class="number">5</span>];</span><br><span class="line">    f[now_posi][<span class="number">0</span>] = temp[<span class="number">6</span>];</span><br><span class="line">    f[now_posi][<span class="number">1</span>] = temp[<span class="number">7</span>];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">  <span class="built_in">init</span>(n);</span><br><span class="line">  <span class="built_in">dfs</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">-1</span>);</span><br><span class="line">  <span class="built_in">dfs</span>(<span class="number">1</span>,<span class="number">0</span>,<span class="number">-1</span>);</span><br><span class="line">  <span class="built_in">dfs2</span>(<span class="number">0</span>,<span class="number">-1</span>,<span class="number">-1</span>);</span><br><span class="line">  cout&lt;&lt;ans&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> n;</span><br><span class="line">  cin&gt;&gt;n;</span><br><span class="line">  <span class="built_in">memset</span>(head,<span class="number">-1</span>,<span class="built_in">sizeof</span>(head));</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt; n;i++)&#123;</span><br><span class="line">    <span class="type">int</span> a,b,c;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d%d&quot;</span>,&amp;a,&amp;b,&amp;c);</span><br><span class="line">    a--;</span><br><span class="line">    b--;</span><br><span class="line">    <span class="built_in">add_edge</span>(a,b,c);</span><br><span class="line">    <span class="built_in">add_edge</span>(b,a,c);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">solve</span>(n);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97%E6%80%A7%E8%B4%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -727,75 +1075,6 @@ class="math inline">\(O(n^{2})\)</span></p>
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/%E6%A0%91%E5%BD%A2%E8%83%8C%E5%8C%85/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/acm-icpc.png">
-      <meta itemprop="name" content="skk1faker">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="skk1faker 笔记">
-      <meta itemprop="description" content="登峰造极">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | skk1faker 笔记">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/22/%E6%A0%91%E5%BD%A2%E8%83%8C%E5%8C%85/" class="post-title-link" itemprop="url">树形背包</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94%E5%85%AC%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -852,159 +1131,6 @@ class="math inline">\(\mu(n)\)</span>的定义。</p>
 \sum_{d|n}g(\frac{n}{d})\)</span>，则<span class="math inline">\(g(n) =
 \sum_{d|n} \mu(d)
 f(\frac{n}{d})\)</span>。反之亦然，既两个条件为充要条件。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/%E6%8D%A2%E6%A0%B9dp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/acm-icpc.png">
-      <meta itemprop="name" content="skk1faker">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="skk1faker 笔记">
-      <meta itemprop="description" content="登峰造极">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | skk1faker 笔记">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/22/%E6%8D%A2%E6%A0%B9dp/" class="post-title-link" itemprop="url">换根dp</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="换根dp">换根dp</h1>
-<p>换根dp的基本思路是</p>
-<ol type="1">
-<li>先计算一棵树中所有节点的dp值。</li>
-<li>将根节点a附近的节点b重新视为根，此时只有ab节点的父子关系发生了变化，其他节点的关系并不改变，依赖于父子关系的dp值只需要改变ab节点处的dp值
-2.1
-现将父节点a与子节点b断开，改变相应的dp值，即改变父节点a的dp值，将b的贡献去掉。
-2.2 将b节点的值加上节点a的贡献，得到新的dp值，完成换根过程。</li>
-<li>利用dfs过程从跟开始，不断进行换根，每次换根时间为<code>O(1)</code>，换根过程先记录原根节点与即将变换的根节点dp值，然后变换，变换后经过dfs过程后应将dp值恢复，使得下一次换根过程正确计算，可看下述代码的dfs2过程。</li>
-</ol>
-<p>以下为luogu的p3647连珠线</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2024 Wang XinPeng. All rights reserved.</span></span><br><span class="line"><span class="comment">*   </span></span><br><span class="line"><span class="comment">*   filename:     p3647.cpp</span></span><br><span class="line"><span class="comment">*   username:     skt1faker</span></span><br><span class="line"><span class="comment">*   create time:  11:06  2024.05.04</span></span><br><span class="line"><span class="comment">*   modify time:  11:06  2024.05.04</span></span><br><span class="line"><span class="comment">*   email:        skk1faker@163.com</span></span><br><span class="line"><span class="comment">*   descripe:     </span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> lll __int128</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DEBUG0</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod1 = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod2 = <span class="number">998244353</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> maxn = <span class="number">400011</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Edge</span>&#123;</span><br><span class="line">  <span class="type">int</span> length;</span><br><span class="line">  <span class="type">int</span> to;</span><br><span class="line">  <span class="type">int</span> next;</span><br><span class="line">&#125;;</span><br><span class="line">ll dp[<span class="number">2</span>][maxn],head[maxn],now_edge_num,f[maxn][<span class="number">2</span>];</span><br><span class="line">Edge e[maxn &lt;&lt; <span class="number">1</span>];</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add_edge</span><span class="params">(<span class="type">int</span> a,<span class="type">int</span> b,<span class="type">int</span> c)</span></span>&#123;</span><br><span class="line">  e[now_edge_num].length = c;</span><br><span class="line">  e[now_edge_num].to = b;</span><br><span class="line">  e[now_edge_num].next = head[a];</span><br><span class="line">  head[a] = now_edge_num++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">  <span class="built_in">memset</span>(dp,<span class="number">-1</span>,<span class="built_in">sizeof</span>(dp));</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">    f[i][<span class="number">0</span>] = <span class="number">-2e16</span>;</span><br><span class="line">    f[i][<span class="number">1</span>] = <span class="number">-2e16</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> status,<span class="type">int</span> now_posi,<span class="type">int</span> fa)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_max</span><span class="params">(<span class="type">int</span> edge_id,<span class="type">int</span> now_posi)</span></span>&#123;</span><br><span class="line">  <span class="type">int</span> num = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = head[e[edge_id].to];i != <span class="number">-1</span>;i = e[i].next)&#123;</span><br><span class="line">    num++;</span><br><span class="line">    <span class="keyword">if</span>(num &gt; <span class="number">1</span>)<span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(num == <span class="number">1</span>)&#123;</span><br><span class="line">    dp[<span class="number">0</span>][e[edge_id].to] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">max</span>(<span class="built_in">dfs</span>(<span class="number">0</span>,e[edge_id].to,now_posi), <span class="built_in">dfs</span>(<span class="number">1</span>,e[edge_id].to,now_posi) + e[edge_id].length);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> status,<span class="type">int</span> now_posi,<span class="type">int</span> fa)</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(dp[status][now_posi] &gt;= <span class="number">0</span>)<span class="keyword">return</span> dp[status][now_posi];</span><br><span class="line">  dp[status][now_posi] = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span>(status == <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = head[now_posi];i != <span class="number">-1</span> ;i = e[i].next)&#123;</span><br><span class="line">      <span class="keyword">if</span>(e[i].to == fa)<span class="keyword">continue</span>;</span><br><span class="line">      dp[status][now_posi] += <span class="built_in">get_max</span>(i,now_posi);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="type">int</span> flag = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> length = <span class="number">0</span>; <span class="comment">// <span class="doctag">TODO:</span>可能值会更小</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = head[now_posi];i != <span class="number">-1</span> ;i = e[i].next)&#123;</span><br><span class="line">      <span class="type">int</span> next_posi = e[i].to;</span><br><span class="line">      <span class="keyword">if</span>(next_posi == fa)<span class="keyword">continue</span>;</span><br><span class="line">      <span class="keyword">if</span>(flag)&#123;</span><br><span class="line">        <span class="keyword">if</span>(length &lt;= e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi))&#123;</span><br><span class="line">          length = <span class="built_in">max</span>(length,e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi));</span><br><span class="line">          f[now_posi][<span class="number">1</span>] = f[now_posi][<span class="number">0</span>];</span><br><span class="line">          f[now_posi][<span class="number">0</span>] = length;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(f[now_posi][<span class="number">1</span>] &lt; e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi))&#123;</span><br><span class="line">          f[now_posi][<span class="number">1</span>] = e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span> &#123;</span><br><span class="line">        length = e[i].length + <span class="built_in">dfs</span>(<span class="number">0</span>,next_posi,now_posi) - <span class="built_in">get_max</span>(i,now_posi);</span><br><span class="line">        f[now_posi][<span class="number">1</span>] = f[now_posi][<span class="number">0</span>];</span><br><span class="line">        f[now_posi][<span class="number">0</span>] = length;</span><br><span class="line">        flag = <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dp[status][now_posi] = <span class="built_in">dfs</span>(<span class="number">0</span>,now_posi,fa) + length;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dp[status][now_posi];</span><br><span class="line">&#125;</span><br><span class="line">ll ans;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">dfs2</span><span class="params">(<span class="type">int</span> now_posi,<span class="type">int</span> fa,<span class="type">int</span> edge_id)</span></span>&#123;</span><br><span class="line">  <span class="comment">// 换根过程</span></span><br><span class="line">  <span class="type">int</span> temp[<span class="number">8</span>];</span><br><span class="line">  <span class="keyword">if</span>(fa != <span class="number">-1</span>)&#123;</span><br><span class="line">    temp[<span class="number">0</span>] = dp[<span class="number">0</span>][fa];</span><br><span class="line">    temp[<span class="number">1</span>] = dp[<span class="number">1</span>][fa];</span><br><span class="line">    temp[<span class="number">2</span>] = dp[<span class="number">0</span>][now_posi];</span><br><span class="line">    temp[<span class="number">3</span>] = dp[<span class="number">1</span>][now_posi];</span><br><span class="line">    temp[<span class="number">4</span>] = f[fa][<span class="number">0</span>];</span><br><span class="line">    temp[<span class="number">5</span>] = f[fa][<span class="number">1</span>];</span><br><span class="line">    temp[<span class="number">6</span>] = f[now_posi][<span class="number">0</span>];</span><br><span class="line">    temp[<span class="number">7</span>] = f[now_posi][<span class="number">1</span>];</span><br><span class="line">    <span class="type">int</span> length;</span><br><span class="line">    </span><br><span class="line">    dp[<span class="number">0</span>][fa] -= <span class="built_in">get_max</span>(edge_id,fa);</span><br><span class="line">    <span class="keyword">if</span>(f[fa][<span class="number">0</span>] == e[edge_id].length + dp[<span class="number">0</span>][now_posi] - <span class="built_in">get_max</span>(edge_id,fa))&#123;   <span class="comment">// 只能使用次大</span></span><br><span class="line">      dp[<span class="number">1</span>][fa] = dp[<span class="number">0</span>][fa] + f[fa][<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      dp[<span class="number">1</span>][fa] =  dp[<span class="number">0</span>][fa] + f[fa][<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    dp[<span class="number">0</span>][now_posi] += <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>,now_posi);</span><br><span class="line">    <span class="keyword">if</span>(f[now_posi][<span class="number">0</span>] &lt;= e[edge_id ^ <span class="number">1</span>].length + dp[<span class="number">0</span>][fa] - <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>, now_posi))&#123;</span><br><span class="line">      f[now_posi][<span class="number">1</span>] = f[now_posi][<span class="number">0</span>];</span><br><span class="line">      f[now_posi][<span class="number">0</span>] = e[edge_id ^ <span class="number">1</span>].length + dp[<span class="number">0</span>][fa] - <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>, now_posi);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(f[now_posi][<span class="number">1</span>] &lt;= e[edge_id ^ <span class="number">1</span>].length + dp[<span class="number">0</span>][fa] - <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>, now_posi))&#123;</span><br><span class="line">      f[now_posi][<span class="number">1</span>] = e[edge_id ^ <span class="number">1</span>].length + dp[<span class="number">0</span>][fa] - <span class="built_in">get_max</span>(edge_id ^ <span class="number">1</span>, now_posi);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  ans = <span class="built_in">max</span>(ans,dp[<span class="number">0</span>][now_posi]);</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = head[now_posi]; i != <span class="number">-1</span>;i = e[i].next)&#123;    <span class="comment">// </span></span><br><span class="line">    <span class="keyword">if</span>(e[i].to == fa)<span class="keyword">continue</span>;</span><br><span class="line">    <span class="built_in">dfs2</span>(e[i].to,now_posi,i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(fa != <span class="number">-1</span>)&#123;</span><br><span class="line">    dp[<span class="number">0</span>][fa] = temp[<span class="number">0</span>];</span><br><span class="line">    dp[<span class="number">1</span>][fa] = temp[<span class="number">1</span>];</span><br><span class="line">    dp[<span class="number">0</span>][now_posi] = temp[<span class="number">2</span>];</span><br><span class="line">    dp[<span class="number">1</span>][now_posi] = temp[<span class="number">3</span>];</span><br><span class="line">    f[fa][<span class="number">0</span>] = temp[<span class="number">4</span>];</span><br><span class="line">    f[fa][<span class="number">1</span>] = temp[<span class="number">5</span>];</span><br><span class="line">    f[now_posi][<span class="number">0</span>] = temp[<span class="number">6</span>];</span><br><span class="line">    f[now_posi][<span class="number">1</span>] = temp[<span class="number">7</span>];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">(<span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">  <span class="built_in">init</span>(n);</span><br><span class="line">  <span class="built_in">dfs</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">-1</span>);</span><br><span class="line">  <span class="built_in">dfs</span>(<span class="number">1</span>,<span class="number">0</span>,<span class="number">-1</span>);</span><br><span class="line">  <span class="built_in">dfs2</span>(<span class="number">0</span>,<span class="number">-1</span>,<span class="number">-1</span>);</span><br><span class="line">  cout&lt;&lt;ans&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> n;</span><br><span class="line">  cin&gt;&gt;n;</span><br><span class="line">  <span class="built_in">memset</span>(head,<span class="number">-1</span>,<span class="built_in">sizeof</span>(head));</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>;i &lt; n;i++)&#123;</span><br><span class="line">    <span class="type">int</span> a,b,c;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d%d&quot;</span>,&amp;a,&amp;b,&amp;c);</span><br><span class="line">    a--;</span><br><span class="line">    b--;</span><br><span class="line">    <span class="built_in">add_edge</span>(a,b,c);</span><br><span class="line">    <span class="built_in">add_edge</span>(b,a,c);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">solve</span>(n);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://skk1faker.github.io/2025/02/22/steam-linux%E6%95%99%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/acm-icpc.png">
-      <meta itemprop="name" content="skk1faker">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="skk1faker 笔记">
-      <meta itemprop="description" content="登峰造极">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | skk1faker 笔记">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/22/steam-linux%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">steam_linux教程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-02-22 12:41:23" itemprop="dateCreated datePublished" datetime="2025-02-22T12:41:23+08:00">2025-02-22</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="如何在linux上玩windows的游戏">如何在linux上玩windows的游戏</h3>
-<p>打开设置， 首先在“interface”一栏中找到“client Beta
-participation”，选择steam Beta update， 这个是steam的wine分支<br />
-然后在“compatibility”中找到“enable Steam play for all other
-title”,这样可以玩其他平台的游戏了</p>
 
       
     </div>
